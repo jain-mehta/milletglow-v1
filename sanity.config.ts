@@ -1,3 +1,4 @@
+'use client'
 import { defineConfig } from 'sanity'
 import { deskTool } from 'sanity/desk'
 import { visionTool } from '@sanity/vision'
@@ -6,7 +7,7 @@ import { schemaTypes } from './sanity/schemas'
 export default defineConfig({
   name: 'millet-glow',
   title: 'Millet Glow CMS',
-
+ basePath: '/adminpanel',
   projectId: 'z3uea27k',
   dataset: 'production',
 

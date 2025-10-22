@@ -13,7 +13,7 @@ interface BlogPost {
   excerpt: string
   image: any
   publishedAt: string
-  author: string
+  author: { name: string, image?: any }
   tags?: string[]
 }
 
@@ -55,7 +55,7 @@ export default function BlogPage() {
                   <div className="skeleton h-10 w-24"></div>
                 </div>
               </div>
-            ))}
+            ))}ac
           </div>
         </div>
       </div>

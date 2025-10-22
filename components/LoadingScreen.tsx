@@ -2,6 +2,8 @@
 
 import { motion } from 'framer-motion'
 import { Leaf } from 'lucide-react'
+import Image from 'next/image'
+import LogoImage from '@/public/images/banners/logo.png'
 
 export default function LoadingScreen() {
   return (
@@ -46,7 +48,8 @@ export default function LoadingScreen() {
           >
             {/* Logo Circle Background */}
             <div className="w-24 h-24 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center shadow-lg">
-              <Leaf className="w-12 h-12 text-primary-600" />
+              <Image src={LogoImage} alt={'logo'} fill className='object-contains' />
+
             </div>
 
             {/* Glow Effect */}

@@ -69,9 +69,8 @@ export default function Testimonials() {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`w-5 h-5 ${
-          i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
-        }`}
+        className={`w-5 h-5 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
+          }`}
       />
     ))
   }
@@ -129,40 +128,35 @@ export default function Testimonials() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 gap-8"
         >
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial._id}
               variants={itemVariants}
-              className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 relative group"
+              className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 relative group flex flex-col md:flex-row items-start md:items-center gap-6"
             >
-              {/* Quote Icon */}
-              <div className="absolute -top-4 left-8">
-                <div className="bg-primary-600 rounded-full p-3 shadow-lg">
-                  <Quote className="w-6 h-6 text-white" />
-                </div>
-              </div>
-
-              {/* Customer Info */}
-              <div className="flex items-center mb-6 pt-4">
-                <div className="relative w-12 h-12 mr-4">
+              {/* Left Side - Image, Name & Rating */}
+              <div className="flex flex-col items-center md:items-start w-full md:w-1/3">
+                {/* Customer Image */}
+                <div className="relative w-16 h-16 mb-4">
                   {testimonial.customerImage ? (
                     <Image
-                      src={urlFor(testimonial.customerImage).width(80).height(80).url()}
+                      src={urlFor(testimonial.customerImage).width(100).height(100).url()}
                       alt={testimonial.customerName}
                       fill
-                      className="rounded-full object-cover"
+                      className="rounded-xl object-cotain"
                     />
                   ) : (
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary-400 to-secondary-400 rounded-full flex items-center justify-center text-white font-semibold">
+                    <div className="w-16 h-16 bg-gradient-to-br from-primary-400 to-secondary-400 rounded-full flex items-center justify-center text-white font-semibold text-lg">
                       {testimonial.customerName.charAt(0)}
                     </div>
                   )}
                 </div>
 
-                <div className="flex-1">
-                  <h4 className="font-semibold text-primary-900 flex items-center gap-2">
+                {/* Name & Location */}
+                <div className="text-center md:text-left">
+                  <h4 className="font-semibold text-primary-900 flex items-center gap-2 justify-center md:justify-start">
                     {testimonial.customerName}
                     {testimonial.isVerified && (
                       <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
@@ -174,26 +168,27 @@ export default function Testimonials() {
                     <p className="text-gray-500 text-sm">{testimonial.customerInfo.location}</p>
                   )}
                 </div>
+
+                {/* Rating */}
+                <div className="flex items-center mt-3">
+                  {renderStars(testimonial.rating)}
+                  <span className="ml-2 text-sm text-gray-600">{testimonial.rating}.0</span>
+                </div>
               </div>
 
-              {/* Rating */}
-              <div className="flex items-center mb-4">
-                {renderStars(testimonial.rating)}
-                <span className="ml-2 text-sm text-gray-600">
-                  {testimonial.rating}.0
-                </span>
+              {/* Right Side - Review Text */}
+              <div className="flex-1">
+                <p className="text-gray-700 leading-relaxed italic">
+                  "{testimonial.reviewText}"
+                </p>
               </div>
-
-              {/* Review */}
-              <p className="text-gray-700 leading-relaxed italic mb-4">
-                "{testimonial.reviewText}"
-              </p>
 
               {/* Hover Effect */}
               <div className="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-primary-200 transition-colors duration-300"></div>
             </motion.div>
           ))}
         </motion.div>
+
 
         {/* Auto-scrolling testimonials for mobile */}
         <div className="mt-16 md:hidden">
@@ -233,34 +228,6 @@ export default function Testimonials() {
             </motion.div>
           </div>
         </div>
-
-        {/* Trust Indicators */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="mt-16 text-center"
-        >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-primary-600">1000+</div>
-              <div className="text-gray-600 text-sm">Happy Customers</div>
-            </div>
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-primary-600">4.9★</div>
-              <div className="text-gray-600 text-sm">Average Rating</div>
-            </div>
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-primary-600">98%</div>
-              <div className="text-gray-600 text-sm">Satisfaction Rate</div>
-            </div>
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-primary-600">500+</div>
-              <div className="text-gray-600 text-sm">5-Star Reviews</div>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </section>
   )

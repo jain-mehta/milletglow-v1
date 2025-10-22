@@ -78,7 +78,7 @@ export default function BenefitsSection() {
           className="absolute -top-20 -right-20 w-96 h-96"
         >
           <Image
-            src="/svgs/img2.svg"
+            src="/images/productonly/1.png"
             alt="Millet background pattern"
             fill
             className="object-contain"
@@ -92,7 +92,7 @@ export default function BenefitsSection() {
           className="absolute -bottom-20 -left-20 w-96 h-96"
         >
           <Image
-            src="/svgs/img3.svg"
+          src="/images/productonly/3.png"
             alt="Millet background pattern"
             fill
             className="object-contain"
@@ -162,44 +162,6 @@ export default function BenefitsSection() {
           })}
         </motion.div>
 
-        {/* Bottom info section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          viewport={{ once: true }}
-          className="mt-16"
-        >
-          <div className="bg-gradient-to-r from-primary-600 to-secondary-600 rounded-3xl p-8 md:p-12 text-white text-center">
-            <h3 className="text-2xl md:text-3xl font-bold mb-4">
-              Nutrition Meets Tradition
-            </h3>
-            <p className="text-primary-100 mb-8 max-w-3xl mx-auto leading-relaxed">
-              For thousands of years, millet has been a staple food providing essential nutrition.
-              Today, we bring you this ancient superfood with modern quality standards,
-              ensuring you get maximum health benefits in every bite.
-            </p>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-8">
-              <div className="text-center">
-                <div className="text-3xl font-bold mb-2">12g</div>
-                <div className="text-primary-200 text-sm">Protein per 100g</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold mb-2">8g</div>
-                <div className="text-primary-200 text-sm">Fiber per 100g</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold mb-2">0mg</div>
-                <div className="text-primary-200 text-sm">Cholesterol</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold mb-2">100%</div>
-                <div className="text-primary-200 text-sm">Gluten-Free</div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </section>
   )

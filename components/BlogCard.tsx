@@ -15,7 +15,7 @@ interface BlogCardProps {
     excerpt: string
     image: any
     publishedAt: string
-    author: string
+    author: { name: string; image?: any }
     tags?: string[]
   }
   index?: number
@@ -71,7 +71,7 @@ export default function BlogCard({ post, index = 0 }: BlogCardProps) {
               </div>
               <div className="flex items-center space-x-1">
                 <User className="w-4 h-4" />
-                <span>{post.author}</span>
+                <span>{post.author.name}</span>
               </div>
             </div>
 

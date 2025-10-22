@@ -6,6 +6,8 @@ import { Leaf, Mail, Phone, MapPin, Instagram, Facebook, Twitter } from 'lucide-
 import { motion } from 'framer-motion'
 import { subscribeToNewsletter } from '@/lib/mailchimp'
 import toast from 'react-hot-toast'
+import Image from 'next/image'
+import LogoImage from '@/public/images/banners/logo.png'
 
 const footerLinks = {
   products: [
@@ -19,14 +21,7 @@ const footerLinks = {
     { name: 'Our Story', href: '/about#story' },
     { name: 'Blog', href: '/blog' },
     { name: 'Contact', href: '/contact' },
-  ],
-  support: [
-    { name: 'FAQ', href: '/faq' },
-    { name: 'Shipping Info', href: '/shipping' },
-    { name: 'Returns', href: '/returns' },
-    { name: 'Privacy Policy', href: '/privacy' },
-    { name: 'Terms of Service', href: '/terms' },
-  ],
+  ]
 }
 
 const socialLinks = [
@@ -70,54 +65,19 @@ export default function Footer() {
 
   return (
     <footer className="bg-gradient-to-br from-beige-100 to-beige-200">
-      {/* Newsletter Section */}
-      <div className="border-b border-beige-300">
-        <div className="container section-padding">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto text-center"
-          >
-            <h3 className="text-2xl md:text-3xl font-bold font-serif text-primary-800 mb-4">
-              Stay Connected with Millet Wisdom
-            </h3>
-            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-              Join our newsletter for healthy recipes, nutrition tips, and exclusive offers on our premium millet products.
-            </p>
-
-            <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="input-field flex-1"
-                required
-              />
-              <button
-                type="submit"
-                disabled={isSubscribing}
-                className="btn-primary whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubscribing ? 'Subscribing...' : 'Subscribe'}
-              </button>
-            </form>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Main Footer Content */}
       <div className="container py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand Section */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center space-x-2 mb-6">
-              <Leaf className="w-8 h-8 text-primary-600" />
-              <span className="text-2xl font-bold text-primary-800 font-serif">
-                Millet Glow
-              </span>
+              <div className="relative w-36 h-16 md:w-48 md:h-24">
+                <Image
+                  src={LogoImage}
+                  alt="Millet Glow Logo"
+                  fill
+                  className="object-cover "
+                />
+              </div>
             </Link>
 
             <p className="text-gray-600 mb-6 max-w-md">
@@ -174,30 +134,48 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Support Links */}
-          <div>
-            <h4 className="text-lg font-semibold text-primary-800 mb-4">Support</h4>
-            <ul className="space-y-2">
-              {footerLinks.support.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-600 hover:text-primary-600 transition-colors duration-200"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          {/* Newsletter Section (Moved Here) */}
+          <div className="lg:col-span-1">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-left"
+            >
+              <h4 className="text-lg font-semibold text-primary-800 mb-4">Newsletter</h4>
+              <p className="text-gray-600 mb-4 text-sm">
+                Join our community for millet recipes, nutrition tips, and exclusive offers.
+              </p>
+
+              <form onSubmit={handleNewsletterSubmit} className="flex flex-col gap-3">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="input-field w-full"
+                  required
+                />
+                <button
+                  type="submit"
+                  disabled={isSubscribing}
+                  className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubscribing ? 'Subscribing...' : 'Subscribe'}
+                </button>
+              </form>
+            </motion.div>
           </div>
         </div>
 
-        {/* Social Links */}
+        {/* Social Links + Copyright */}
         <div className="border-t border-beige-300 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-gray-600 text-sm">
-              © 2024 Millet Glow. All rights reserved.
+              © {new Date().getFullYear()} Millet Glow. All rights reserved.
             </div>
+
 
             <div className="flex space-x-6">
               {socialLinks.map((social) => {

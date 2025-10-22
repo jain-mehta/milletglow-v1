@@ -13,11 +13,11 @@ export default function HomePage() {
       {/* Featured Products */}
       <FeaturedProducts />
 
+      {/* Benefits Section */}
+      <BenefitsSection />
+
       {/* Why Choose Us */}
       <WhyChooseUs />
-
-      {/* Benefits of Millet */}
-      <BenefitsSection />
 
       {/* Testimonials */}
       <Testimonials />
