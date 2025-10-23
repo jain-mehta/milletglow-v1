@@ -51,10 +51,10 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           <div className="relative h-48 mb-6 overflow-hidden rounded-lg bg-gray-50">
             {product.image && (
               <Image
-                src={urlFor(product.image).width(400).height(300).url()}
+                src={urlFor(product.image).url()}
                 alt={product.name}
                 fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                className="object-contain group-hover:scale-105 transition-transform duration-300"
               />
             )}
 

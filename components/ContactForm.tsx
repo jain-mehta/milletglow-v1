@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Send, User, Mail, Phone, MessageSquare } from 'lucide-react'
+import { Send, User, Mail, Phone, MessageSquare, Building } from 'lucide-react'
 import { sendContactMessage } from '@/lib/mailchimp'
 import toast from 'react-hot-toast'
+import ReCAPTCHA from 'react-google-recaptcha'
 
 interface ContactFormProps {
   className?: string
@@ -16,33 +17,63 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
     email: '',
     phone: '',
     subject: '',
-    message: ''
+    message: '',
+    organizationType: '',
+    customOrganization: ''
   })
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
+    setFormData(prev => ({ ...prev, [name]: value }))
+    setErrors(prev => ({ ...prev, [name]: '' })) // clear error on typing
+  }
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+
+    if (!formData.name.trim()) newErrors.name = 'Full name is required'
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Enter a valid email address'
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone number is required'
+    } else if (!/^[6-9]\d{9}$/.test(formData.phone)) {
+      newErrors.phone = 'Enter a valid 10-digit Indian phone number'
+    }
+
+    if (!formData.message.trim()) newErrors.message = 'Message is required'
+
+    if (!formData.organizationType) newErrors.organizationType = 'Please select your organization type'
+    if (formData.organizationType === 'Others' && !formData.customOrganization.trim())
+      newErrors.customOrganization = 'Please specify your organization type'
+
+    if (!recaptchaToken) newErrors.recaptcha = 'Please verify you are not a robot'
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!formData.name || !formData.email || !formData.message) {
-      toast.error('Please fill in all required fields')
+    if (!validateForm()) {
+      toast.error('Please correct the highlighted errors.')
       return
     }
 
     setIsSubmitting(true)
 
     try {
-      // For now, we'll skip reCAPTCHA and just send the message
       const result = await sendContactMessage({
         ...formData,
-        recaptchaToken: '' // We'll add reCAPTCHA later
+        recaptchaToken: recaptchaToken as string
       })
 
       if (result.success) {
@@ -52,8 +83,11 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
           email: '',
           phone: '',
           subject: '',
-          message: ''
+          message: '',
+          organizationType: '',
+          customOrganization: ''
         })
+        setRecaptchaToken(null)
       } else {
         toast.error(result.error || 'Failed to send message')
       }
@@ -67,122 +101,124 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
   return (
     <div className={className}>
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Name Field */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-            Full Name *
-          </label>
-          <div className="relative">
-            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              className="input-field pl-10"
-              placeholder="Enter your full name"
-            />
-          </div>
-        </motion.div>
+        {/* Name */}
+        <FormField
+          label="Full Name *"
+          icon={<User />}
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          error={errors.name}
+          placeholder="Enter your full name"
+          required
+        />
 
-        {/* Email Field */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-            Email Address *
-          </label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="input-field pl-10"
-              placeholder="Enter your email address"
-            />
-          </div>
-        </motion.div>
+        {/* Email */}
+        <FormField
+          label="Email Address *"
+          icon={<Mail />}
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+          error={errors.email}
+          placeholder="Enter your email address"
+          required
+        />
 
-        {/* Phone Field */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-            Phone Number
-          </label>
-          <div className="relative">
-            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="input-field pl-10"
-              placeholder="Enter your phone number"
-            />
-          </div>
-        </motion.div>
+        {/* Phone */}
+        <FormField
+          label="Phone Number *"
+          icon={<Phone />}
+          name="phone"
+          type="tel"
+          value={formData.phone}
+          onChange={handleChange}
+          error={errors.phone}
+          placeholder="Enter your phone number"
+          required
+        />
 
-        {/* Subject Field */}
+        {/* Organization Type */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
-            Subject
-          </label>
-          <input
-            type="text"
-            id="subject"
-            name="subject"
-            value={formData.subject}
-            onChange={handleChange}
-            className="input-field"
-            placeholder="What is this regarding?"
-          />
-        </motion.div>
-
-        {/* Message Field */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-            Message *
+          <label htmlFor="organizationType" className="block text-sm font-medium text-gray-700 mb-2">
+            Organization Type *
           </label>
           <div className="relative">
-            <MessageSquare className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-            <textarea
-              id="message"
-              name="message"
-              value={formData.message}
+            <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <select
+              id="organizationType"
+              name="organizationType"
+              value={formData.organizationType}
               onChange={handleChange}
+              className="input-field pl-10"
               required
-              rows={5}
-              className="input-field pl-10 resize-none"
-              placeholder="Tell us how we can help you..."
-            />
+            >
+              <option value="">Select your organization type</option>
+              <option value="University">University</option>
+              <option value="School">School</option>
+              <option value="Fitness Center">Fitness Center</option>
+              <option value="Institution">Institution</option>
+              <option value="Hospital">Hospital</option>
+              <option value="Day Care">Day Care</option>
+              <option value="Others">Others</option>
+            </select>
           </div>
+          {errors.organizationType && (
+            <p className="text-sm text-red-500 mt-1">{errors.organizationType}</p>
+          )}
         </motion.div>
 
-        {/* Submit Button */}
+        {/* Custom Organization */}
+        {formData.organizationType === 'Others' && (
+          <FormField
+            label="Specify your organization *"
+            icon={<Building />}
+            name="customOrganization"
+            value={formData.customOrganization}
+            onChange={handleChange}
+            error={errors.customOrganization}
+            placeholder="Enter your organization type"
+            required
+          />
+        )}
+
+        {/* Subject */}
+        <FormField
+          label="Subject"
+          name="subject"
+          value={formData.subject}
+          onChange={handleChange}
+          placeholder="What is this regarding?"
+        />
+
+        {/* Message */}
+        <FormField
+          label="Message *"
+          icon={<MessageSquare />}
+          name="message"
+          value={formData.message}
+          onChange={handleChange}
+          error={errors.message}
+          placeholder="Tell us how we can help you..."
+          isTextarea
+          required
+        />
+
+        {/* reCAPTCHA */}
+        <div className="flex justify-center">
+          <ReCAPTCHA
+            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+            onChange={token => setRecaptchaToken(token)}
+          />
+        </div>
+        {errors.recaptcha && <p className="text-sm text-red-500 text-center">{errors.recaptcha}</p>}
+
+        {/* Submit */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -207,16 +243,61 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
           </button>
         </motion.div>
 
-        {/* Required Fields Note */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          className="text-sm text-gray-500 text-center"
-        >
-          * Required fields
-        </motion.div>
+        <p className="text-sm text-gray-500 text-center">* Required fields</p>
       </form>
     </div>
+  )
+}
+
+/* ✅ Reusable Form Field Component */
+function FormField({
+  label,
+  icon,
+  name,
+  type = 'text',
+  value,
+  onChange,
+  placeholder,
+  error,
+  isTextarea = false,
+  required = false
+}: any) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-2">
+        {label}
+      </label>
+      <div className="relative">
+        {icon && <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">{icon}</div>}
+        {isTextarea ? (
+          <textarea
+            id={name}
+            name={name}
+            value={value}
+            onChange={onChange}
+            required={required}
+            rows={5}
+            className="input-field pl-10 resize-none"
+            placeholder={placeholder}
+          />
+        ) : (
+          <input
+            id={name}
+            name={name}
+            type={type}
+            value={value}
+            onChange={onChange}
+            required={required}
+            className="input-field pl-10"
+            placeholder={placeholder}
+          />
+        )}
+      </div>
+      {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+    </motion.div>
   )
 }

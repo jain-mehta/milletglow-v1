@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -11,14 +11,14 @@ import {
   Check,
   Leaf,
   Award,
-  ShoppingBag,
   ArrowLeft,
-  Share2
+  Share2,
+  ChevronDown
 } from 'lucide-react'
 import { client, queries, urlFor } from '@/sanity/client'
 import { formatPrice, generateWhatsAppUrl } from '@/lib/utils'
-import ProductCard from '@/components/ProductCard'
 import toast from 'react-hot-toast'
+import FeaturedProducts from '@/components/FeaturedProducts'
 
 interface ProductDetailProps {
   params: {
@@ -37,66 +37,28 @@ interface Product {
   shortDescription: string
   benefits?: string[]
   ingredients?: string[]
-  nutritionFacts?: {
-    energy?: number
-    protein?: number
-    carbohydrates?: number
-    fiber?: number
-    fat?: number
-    saturatedFat?: number
-    sodium?: number
-    iron?: number
-    calcium?: number
-    additionalNutrients?: Array<{
-      nutrient: string
-      amount: string
-      unit: string
-    }>
-  }
+  nutritionFacts?: Record<string, any>
   category: string
   weight: string
   shelfLife?: string
   origin?: string
-  certifications?: Array<{
-    name: string
-    image?: any
-  }>
+  certifications?: Array<{ name: string; image?: any }>
   isOutOfStock: boolean
   isFeatured: boolean
   whatsappMessage?: string
-  seo?: {
-    metaTitle?: string
-    metaDescription?: string
-  }
-  relatedProducts?: Array<{
-    _id: string
-    name: string
-    slug: { current: string }
-    price: number
-    image: any
-    shortDescription: string
-    benefits?: string[]
-    category: string
-    weight: string
-    isOutOfStock: boolean
-    isFeatured: boolean
-  }>
 }
 
 export default function ProductDetailPage({ params }: ProductDetailProps) {
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [nutritionOpen, setNutritionOpen] = useState(false)
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const data = await client.fetch(queries.productBySlug, { slug: params.slug })
-
-        if (!data) {
-          notFound()
-        }
-
+        if (!data) notFound()
         setProduct(data)
       } catch (error) {
         console.error('Error fetching product:', error)
@@ -105,40 +67,33 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
         setLoading(false)
       }
     }
-
     fetchProduct()
   }, [params.slug])
 
   const handleWhatsAppOrder = () => {
     if (!product) return
-
     const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+919876543210'
-    const message = product.whatsappMessage ||
-      `Hi! I'm interested in ${product.name} (₹${product.price}). Can you provide more details about pricing and availability?`
-
+    const message =
+      product.whatsappMessage ||
+      `Hi! I'm interested in ${product.name} (₹${product.price}). Can you provide more details?`
     const whatsappUrl = generateWhatsAppUrl(whatsappNumber, message, product.name)
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
   }
 
   const handleShare = async () => {
     if (!product) return
-
     const shareData = {
       title: product.name,
-      text: `Check out ${product.name} - ${product.description}`,
-      url: window.location.href,
+      text: `Check out ${product.name} - ${product.shortDescription}`,
+      url: window.location.href
     }
-
     try {
-      if (navigator.share) {
-        await navigator.share(shareData)
-      } else {
-        // Fallback to clipboard
+      if (navigator.share) await navigator.share(shareData)
+      else {
         await navigator.clipboard.writeText(window.location.href)
         toast.success('Product link copied to clipboard!')
       }
-    } catch (error) {
-      console.error('Error sharing:', error)
+    } catch {
       toast.error('Failed to share product')
     }
   }
@@ -161,104 +116,78 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
     )
   }
 
-  if (!product) {
-    return notFound()
-  }
+  if (!product) return notFound()
 
-  const allImages = product.gallery && product.gallery.length > 0
-    ? product.gallery
-    : product.image
-    ? [product.image]
-    : []
+  const allImages = product.gallery?.length ? product.gallery : [product.image]
 
   return (
     <div className="min-h-screen pt-20 bg-white">
       <div className="container section-padding">
+
         {/* Breadcrumb */}
-        <motion.div
+        <motion.nav
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-8"
+          className="mb-8 text-sm text-gray-600 flex items-center space-x-2"
         >
-          <nav className="flex items-center space-x-2 text-sm text-gray-600">
-            <Link href="/" className="hover:text-primary-600 transition-colors">
-              Home
-            </Link>
-            <span>/</span>
-            <Link href="/products" className="hover:text-primary-600 transition-colors">
-              Products
-            </Link>
-            <span>/</span>
-            <span className="text-primary-600">{product.name}</span>
-          </nav>
-        </motion.div>
+          <Link href="/" className="hover:text-primary-600">Home</Link>
+          <span>/</span>
+          <Link href="/products" className="hover:text-primary-600">Products</Link>
+          <span>/</span>
+          <span className="text-primary-600">{product.name}</span>
+        </motion.nav>
 
         {/* Back Button */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-8"
+        <Link
+          href="/products"
+          className="inline-flex items-center space-x-2 text-gray-600 hover:text-primary-600 mb-8"
         >
-          <Link
-            href="/products"
-            className="inline-flex items-center space-x-2 text-gray-600 hover:text-primary-600 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Back to Products</span>
-          </Link>
-        </motion.div>
+          <ArrowLeft className="w-5 h-5" />
+          <span>Back to Products</span>
+        </Link>
 
-        {/* Product Details */}
+        {/* Main Product Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          {/* Product Images */}
+          {/* Image Section */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
             className="space-y-6"
           >
-            {/* Main Image */}
             <div className="relative h-96 lg:h-[500px] bg-gray-50 rounded-xl overflow-hidden">
               {allImages[selectedImageIndex] && (
                 <Image
-                  src={urlFor(allImages[selectedImageIndex]).width(600).height(500).url()}
+                  src={urlFor(allImages[selectedImageIndex]).url()}
                   alt={product.name}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   priority
                 />
               )}
-
-              {/* Share Button */}
               <button
                 onClick={handleShare}
-                className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-colors"
+                className="absolute top-4 right-4 bg-white/90 p-2 rounded-full shadow hover:bg-white"
               >
                 <Share2 className="w-5 h-5 text-gray-600" />
               </button>
             </div>
 
-            {/* Thumbnail Images */}
+            {/* Thumbnails */}
             {allImages.length > 1 && (
-              <div className="flex space-x-4 overflow-x-auto">
-                {allImages.map((image, index) => (
+              <div className="flex space-x-3 overflow-x-auto">
+                {allImages.map((img, idx) => (
                   <button
-                    key={index}
-                    onClick={() => setSelectedImageIndex(index)}
-                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${
-                      selectedImageIndex === index
-                        ? 'border-primary-600'
-                        : 'border-gray-200 hover:border-gray-300'
+                    key={idx}
+                    onClick={() => setSelectedImageIndex(idx)}
+                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition ${
+                      selectedImageIndex === idx ? 'border-primary-600' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
                     <Image
-                      src={urlFor(image).width(80).height(80).url()}
-                      alt={`${product.name} - Image ${index + 1}`}
-                      width={80}
-                      height={80}
-                      className="object-cover w-full h-full"
+                      src={urlFor(img).url()}
+                      alt={`${product.name}-${idx}`}
+                      className="object-contain w-auto h-auto"
                     />
                   </button>
                 ))}
@@ -270,245 +199,150 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-8"
+            transition={{ duration: 0.6 }}
+            className="space-y-6"
           >
-            {/* Title and Price */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h1 className="text-3xl lg:text-4xl font-bold font-serif text-primary-900">
-                  {product.name}
-                </h1>
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold font-serif text-primary-900">{product.name}</h1>
+              <span
+                className={`px-3 py-1 text-sm rounded-full ${
+                  product.isOutOfStock ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+                }`}
+              >
+                {product.isOutOfStock ? 'Out of Stock' : 'In Stock'}
+              </span>
+            </div>
 
-                <span
-                  className={`px-3 py-1 text-sm font-medium rounded-full ${
-                    !product.isOutOfStock
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-red-100 text-red-800'
-                  }`}
-                >
-                  {!product.isOutOfStock ? 'In Stock' : 'Out of Stock'}
-                </span>
+            <div className="flex items-center space-x-4">
+              <div className="text-3xl font-bold text-primary-600">
+                {formatPrice(product.price)}
               </div>
-
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="text-3xl font-bold text-primary-600">
-                  {formatPrice(product.price)}
-                </div>
-
-                {/* Rating */}
-                <div className="flex items-center space-x-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                      key={star}
-                      className="w-5 h-5 text-yellow-400 fill-current"
-                    />
-                  ))}
-                  <span className="text-gray-600 ml-2">(4.9)</span>
-                </div>
+              <div className="flex items-center space-x-1">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                ))}
               </div>
             </div>
 
-            {/* Description */}
-            <div>
-              <p className="text-gray-700 leading-relaxed text-lg">
-                {product.description}
-              </p>
-            </div>
+            <p className="text-gray-700 text-lg leading-relaxed">{product.description}</p>
 
-            {/* Benefits */}
             {product.benefits && product.benefits.length > 0 && (
               <div>
-                <h3 className="text-xl font-semibold text-primary-900 mb-4">
-                  Key Benefits
-                </h3>
-                <ul className="space-y-3">
-                  {product.benefits.map((benefit, index) => (
-                    <li key={index} className="flex items-start space-x-3">
-                      <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-700">{benefit}</span>
+                <h3 className="text-xl font-semibold mb-3 text-primary-900">Key Benefits</h3>
+                <ul className="space-y-2">
+                  {product.benefits.map((b, i) => (
+                    <li key={i} className="flex items-start space-x-2">
+                      <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                      <span>{b}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
 
-            {/* Trust Indicators */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center space-x-2 text-green-600">
-                <Leaf className="w-5 h-5" />
-                <span className="text-sm font-medium">100% Organic</span>
+              <div className="flex items-center text-green-600 space-x-2">
+                <Leaf className="w-5 h-5" /> <span>100% Organic</span>
               </div>
-              <div className="flex items-center space-x-2 text-yellow-600">
-                <Award className="w-5 h-5" />
-                <span className="text-sm font-medium">Premium Quality</span>
+              <div className="flex items-center text-yellow-600 space-x-2">
+                <Award className="w-5 h-5" /> <span>Premium Quality</span>
               </div>
             </div>
 
-            {/* CTA Buttons */}
-            <div className="space-y-4">
+            <div className="space-y-3">
               {!product.isOutOfStock ? (
-                <button
-                  onClick={handleWhatsAppOrder}
-                  className="w-full btn-whatsapp text-lg py-4 justify-center"
-                >
-                  <MessageCircle className="w-6 h-6" />
-                  Order via WhatsApp
+                <button onClick={handleWhatsAppOrder} className="w-full btn-whatsapp py-4 text-lg">
+                  <MessageCircle className="w-6 h-6" /> Order via WhatsApp
                 </button>
               ) : (
-                <button
-                  disabled
-                  className="w-full bg-gray-300 text-gray-500 font-medium py-4 px-6 rounded-lg cursor-not-allowed"
-                >
+                <button disabled className="w-full bg-gray-300 text-gray-500 py-4 rounded-lg cursor-not-allowed">
                   Out of Stock
                 </button>
               )}
-
-              <div className="text-center text-sm text-gray-600">
-                <p>Questions? Contact us for personalized recommendations!</p>
-              </div>
+              <p className="text-center text-sm text-gray-600">
+                Questions? Contact us for personalized recommendations!
+              </p>
             </div>
           </motion.div>
         </div>
 
-        {/* Additional Information Tabs */}
+        {/* Accordion Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-16 bg-gradient-to-r from-beige-50 to-primary-50 rounded-2xl p-8"
+        >
+          <h3 className="text-2xl font-bold mb-6 text-primary-900">Product Information</h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Details */}
+            <div>
+              <h4 className="font-semibold text-lg mb-3 text-primary-900">Product Details</h4>
+              <ul className="space-y-1 text-gray-700">
+                <li><b>Weight:</b> {product.weight}</li>
+                <li><b>Category:</b> {product.category}</li>
+                {product.shelfLife && <li><b>Shelf Life:</b> {product.shelfLife}</li>}
+                {product.origin && <li><b>Origin:</b> {product.origin}</li>}
+              </ul>
+            </div>
+
+            {/* Ingredients */}
+            {Array.isArray(product.ingredients) && product.ingredients.length > 0 && (
+              <div>
+                <h4 className="font-semibold text-lg mb-3 text-primary-900">Ingredients</h4>
+                <ul className="space-y-1 text-gray-700">
+                  {product.ingredients.map((i, idx) => (
+                    <li key={idx}>• {i}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Nutrition Accordion */}
+            {product.nutritionFacts && (
+              <div>
+                <button
+                  onClick={() => setNutritionOpen(!nutritionOpen)}
+                  className="flex justify-between items-center w-full bg-white border border-gray-200 rounded-lg px-4 py-3 hover:bg-gray-50"
+                >
+                  <span className="font-semibold text-primary-900 text-lg">Nutrition Facts (per 100g)</span>
+                  <ChevronDown
+                    className={`w-5 h-5 transition-transform ${nutritionOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
+
+                <AnimatePresence>
+                  {nutritionOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden mt-3 bg-white border border-gray-100 rounded-lg p-4"
+                    >
+                      {Object.entries(product.nutritionFacts).map(([key, value], i) => (
+                        <div key={i} className="flex justify-between text-gray-700 border-b py-1 last:border-none">
+                          <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
+                          <span className="font-medium">{value}</span>
+                        </div>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Featured Products Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="mb-16"
+          className="mb-20"
         >
-          <div className="bg-gradient-to-r from-beige-50 to-primary-50 rounded-2xl p-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Weight & Category Info */}
-              <div>
-                <h3 className="text-xl font-semibold text-primary-900 mb-4">
-                  Product Details
-                </h3>
-                <dl className="space-y-2">
-                  <div>
-                    <dt className="text-sm font-medium text-gray-600">
-                      Weight
-                    </dt>
-                    <dd className="text-gray-900">{product.weight}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm font-medium text-gray-600">
-                      Category
-                    </dt>
-                    <dd className="text-gray-900">{product.category}</dd>
-                  </div>
-                  {product.shelfLife && (
-                    <div>
-                      <dt className="text-sm font-medium text-gray-600">
-                        Shelf Life
-                      </dt>
-                      <dd className="text-gray-900">{product.shelfLife}</dd>
-                    </div>
-                  )}
-                  {product.origin && (
-                    <div>
-                      <dt className="text-sm font-medium text-gray-600">
-                        Origin
-                      </dt>
-                      <dd className="text-gray-900">{product.origin}</dd>
-                    </div>
-                  )}
-                </dl>
-              </div>
-
-              {/* Ingredients */}
-              {product.ingredients && product.ingredients.length > 0 && (
-                <div>
-                  <h3 className="text-xl font-semibold text-primary-900 mb-4">
-                    Ingredients
-                  </h3>
-                  <ul className="space-y-1">
-                    {product.ingredients.map((ingredient, index) => (
-                      <li key={index} className="text-gray-700">
-                        • {ingredient}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Nutrition Facts */}
-              {product.nutritionFacts && (
-                <div>
-                  <h3 className="text-xl font-semibold text-primary-900 mb-4">
-                    Nutrition Facts (per 100g)
-                  </h3>
-                  <div className="space-y-2">
-                    {product.nutritionFacts.energy && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-700">Energy</span>
-                        <span className="font-medium">{product.nutritionFacts.energy} kcal</span>
-                      </div>
-                    )}
-                    {product.nutritionFacts.protein && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-700">Protein</span>
-                        <span className="font-medium">{product.nutritionFacts.protein}g</span>
-                      </div>
-                    )}
-                    {product.nutritionFacts.carbohydrates && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-700">Carbohydrates</span>
-                        <span className="font-medium">{product.nutritionFacts.carbohydrates}g</span>
-                      </div>
-                    )}
-                    {product.nutritionFacts.fiber && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-700">Fiber</span>
-                        <span className="font-medium">{product.nutritionFacts.fiber}g</span>
-                      </div>
-                    )}
-                    {product.nutritionFacts.fat && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-700">Fat</span>
-                        <span className="font-medium">{product.nutritionFacts.fat}g</span>
-                      </div>
-                    )}
-                    {product.nutritionFacts.additionalNutrients && product.nutritionFacts.additionalNutrients.map((nutrient, index) => (
-                      <div key={index} className="flex justify-between">
-                        <span className="text-gray-700">{nutrient.nutrient}</span>
-                        <span className="font-medium">{nutrient.amount}{nutrient.unit}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+          <FeaturedProducts />
         </motion.div>
-
-        {/* Related Products */}
-        {product.relatedProducts && product.relatedProducts.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="mb-16"
-          >
-            <h2 className="text-3xl font-bold font-serif text-primary-900 text-center mb-12">
-              Related Products
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {product.relatedProducts.map((relatedProduct, index) => (
-                <ProductCard
-                  key={relatedProduct._id}
-                  product={{
-                    ...relatedProduct,
-                    // Related products don't need these fields
-                  }}
-                  index={index}
-                />
-              ))}
-            </div>
-          </motion.div>
-        )}
       </div>
     </div>
   )
