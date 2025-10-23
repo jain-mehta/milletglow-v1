@@ -1,4 +1,4 @@
-import mailchimpTx from '@mailchimp/mailchimp_transactional'
+const mailchimpTx: any = require('@mailchimp/mailchimp_transactional')
 
 /**
  * Initialize Mailchimp Transactional (Mandrill)
