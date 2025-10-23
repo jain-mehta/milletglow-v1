@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Send, User, Mail, Phone, MessageSquare, Building } from 'lucide-react'
+import { Send, User, Mail, Phone, Building } from 'lucide-react'
 import { sendContactMessage } from '@/lib/mailchimp'
 import toast from 'react-hot-toast'
 import ReCAPTCHA from 'react-google-recaptcha'
@@ -16,10 +16,9 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
     name: '',
     email: '',
     phone: '',
-    subject: '',
-    message: '',
     organizationType: '',
-    customOrganization: ''
+    customOrganization: '',
+    message: ''
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -29,7 +28,7 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
-    setErrors(prev => ({ ...prev, [name]: '' })) // clear error on typing
+    setErrors(prev => ({ ...prev, [name]: '' }))
   }
 
   const validateForm = () => {
@@ -48,12 +47,11 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
       newErrors.phone = 'Enter a valid 10-digit Indian phone number'
     }
 
-    if (!formData.message.trim()) newErrors.message = 'Message is required'
-
     if (!formData.organizationType) newErrors.organizationType = 'Please select your organization type'
     if (formData.organizationType === 'Others' && !formData.customOrganization.trim())
       newErrors.customOrganization = 'Please specify your organization type'
 
+    if (!formData.message.trim()) newErrors.message = 'Message is required'
     if (!recaptchaToken) newErrors.recaptcha = 'Please verify you are not a robot'
 
     setErrors(newErrors)
@@ -82,10 +80,9 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
           name: '',
           email: '',
           phone: '',
-          subject: '',
-          message: '',
           organizationType: '',
-          customOrganization: ''
+          customOrganization: '',
+          message: ''
         })
         setRecaptchaToken(null)
       } else {
@@ -187,19 +184,9 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
           />
         )}
 
-        {/* Subject */}
-        <FormField
-          label="Subject"
-          name="subject"
-          value={formData.subject}
-          onChange={handleChange}
-          placeholder="What is this regarding?"
-        />
-
         {/* Message */}
         <FormField
           label="Message *"
-          icon={<MessageSquare />}
           name="message"
           value={formData.message}
           onChange={handleChange}
@@ -209,14 +196,14 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
           required
         />
 
-        {/* reCAPTCHA */}
-        <div className="flex justify-center">
+        {/* reCAPTCHA aligned left */}
+        <div className="mt-4">
           <ReCAPTCHA
             sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
             onChange={token => setRecaptchaToken(token)}
           />
+          {errors.recaptcha && <p className="text-sm text-red-500 mt-1">{errors.recaptcha}</p>}
         </div>
-        {errors.recaptcha && <p className="text-sm text-red-500 text-center">{errors.recaptcha}</p>}
 
         {/* Submit */}
         <motion.div
@@ -281,7 +268,7 @@ function FormField({
             onChange={onChange}
             required={required}
             rows={5}
-            className="input-field pl-10 resize-none"
+            className="input-field pl-3 resize-none"
             placeholder={placeholder}
           />
         ) : (

@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Star, ShoppingBag, MessageCircle } from 'lucide-react'
 import { urlFor } from '@/sanity/client'
 import { formatPrice, generateWhatsAppUrl } from '@/lib/utils'
 
@@ -15,9 +14,7 @@ interface ProductCardProps {
     price: number
     image: any
     shortDescription?: string
-    benefits?: string[]
     category: string
-    weight?: string
     isOutOfStock: boolean
     isFeatured: boolean
   }
@@ -30,12 +27,14 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const handleWhatsAppOrder = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-
     const message = `Hi! I'm interested in ${product.name}. Can you provide more details about pricing and availability?`
     const whatsappUrl = generateWhatsAppUrl(whatsappNumber, message, product.name)
-
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
   }
+
+  // Static 10% discount
+  const discountPercentage = 10
+  const discountedPrice = product.price - product.price * (discountPercentage / 100)
 
   return (
     <motion.div
@@ -45,78 +44,53 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
       viewport={{ once: true }}
       className="group"
     >
-      <Link href={`/product/${product.slug.current}`}>
-        <div className="card p-6 h-full flex flex-col">
-          {/* Product Image */}
-          <div className="relative h-48 mb-6 overflow-hidden rounded-lg bg-gray-50">
+      <Link href={`/product/${product.slug.current}`} className="block h-full">
+        <div className="bg-white rounded-2xl p-6 flex flex-col h-full shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+          {/* Product Image Section */}
+          <div className="relative h-48 flex items-center justify-center mb-6 overflow-hidden rounded-lg bg-white">
             {product.image && (
               <Image
                 src={urlFor(product.image).url()}
                 alt={product.name}
                 fill
-                className="object-contain group-hover:scale-105 transition-transform duration-300"
+                className="object-contain z-10 transition-transform duration-300 group-hover:scale-105"
               />
             )}
-
-            {/* Stock Badge */}
-            <div className="absolute top-3 right-3">
-              <span
-                className={`px-2 py-1 text-xs font-medium rounded-full ${
-                  !product.isOutOfStock
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-red-100 text-red-800'
-                }`}
-              >
-                {!product.isOutOfStock ? 'In Stock' : 'Out of Stock'}
-              </span>
-            </div>
-
-            {/* Rating Stars - Placeholder */}
-            <div className="absolute bottom-3 left-3 flex items-center space-x-1 bg-white/90 backdrop-blur-sm rounded-md px-2 py-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star
-                  key={star}
-                  className="w-3 h-3 text-yellow-400 fill-current"
-                />
-              ))}
-              <span className="text-xs text-gray-600 ml-1">5.0</span>
-            </div>
           </div>
 
           {/* Product Info */}
-          <div className="flex-1 flex flex-col space-y-4">
-            <div className="flex-1">
-              <h3 className="text-xl font-semibold text-primary-900 mb-2 group-hover:text-primary-600 transition-colors line-clamp-2">
+          <div className="flex-1 flex flex-col justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
                 {product.name}
               </h3>
-              <p className="text-gray-600 text-sm line-clamp-3">
-                {product.shortDescription || 'Premium organic millet product'}
+              <p className="text-gray-600 text-sm line-clamp-2 mb-3">
+                {product.shortDescription || 'Discover the goodness of millet in every bite'}
               </p>
+
+              {/* Example Badges (static) */}
+              <div className="flex flex-wrap gap-2 mb-3">
+                <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-yellow-50 text-yellow-800 border border-yellow-100">
+                  Gluten-Free
+                </span>
+                <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-50 text-green-800 border border-green-100">
+                  Organic
+                </span>
+              </div>
             </div>
 
-            {/* Price and Actions */}
-            <div className="space-y-4">
-              <div className="text-2xl font-bold text-primary-600">
+            {/* Price + Discount */}
+            <div className="mt-auto flex items-center gap-2">
+              <span className="text-gray-400 line-through text-sm">
                 {formatPrice(product.price)}
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-2">
-                <div className="flex items-center space-x-2 text-primary-600 hover:text-primary-700 font-medium transition-colors group/link flex-1">
-                  <span>Learn More</span>
-                  <ShoppingBag className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
-                </div>
-
-                {!product.isOutOfStock && (
-                  <button
-                    onClick={handleWhatsAppOrder}
-                    className="btn-whatsapp text-sm py-2 px-4 flex-shrink-0"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                    Order via WhatsApp
-                  </button>
-                )}
-              </div>
+              </span>
+              <span className="text-primary-600 font-semibold text-sm bg-primary-50 px-2 py-0.5 rounded-md">
+                -{discountPercentage}%
+              </span>
             </div>
+            <span className="text-primary-600 font-bold text-xl">
+              {formatPrice(discountedPrice)}
+            </span>
           </div>
         </div>
       </Link>
