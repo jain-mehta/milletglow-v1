@@ -22,11 +22,10 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="font-sans">
-        {/* Clean layout without navbar, footer, or WhatsApp icon */}
-        {children}
-      </body>
-    </html>
+    <div className={inter.variable + ' font-sans'}>
+      {/* Clean layout without navbar, footer, or WhatsApp icon */}
+      {children}
+    </div>
   )
 }
+  

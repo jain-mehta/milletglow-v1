@@ -34,7 +34,8 @@ export async function sendContactMessage(messageData: {
   name: string
   email: string
   phone?: string
-  subject?: string
+  organizationType: string
+  customOrganization?: string
   message: string
   recaptchaToken: string
 }) {

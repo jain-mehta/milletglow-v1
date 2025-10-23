@@ -1,11 +1,20 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Send, User, Mail, Phone, Building } from 'lucide-react'
 import { sendContactMessage } from '@/lib/mailchimp'
 import toast from 'react-hot-toast'
-import ReCAPTCHA from 'react-google-recaptcha'
+
+// TypeScript declaration for reCAPTCHA v3
+declare global {
+  interface Window {
+    grecaptcha: {
+      execute: (siteKey: string, options: { action: string }) => Promise<string>
+      ready: (callback: () => void) => void
+    }
+  }
+}
 
 interface ContactFormProps {
   className?: string
@@ -24,35 +33,180 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
+  const [recaptchaLoaded, setRecaptchaLoaded] = useState(false)
+
+  // Get and validate reCAPTCHA site key
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY
+
+  // Validate site key format
+  const isValidSiteKey = recaptchaSiteKey &&
+    recaptchaSiteKey.length > 20 &&
+    (recaptchaSiteKey.startsWith('6L') || recaptchaSiteKey.startsWith('6I'))
+
+  // Load reCAPTCHA v3 script
+  useEffect(() => {
+    if (!isValidSiteKey) return
+
+    const loadRecaptcha = () => {
+      const script = document.createElement('script')
+      script.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`
+      script.async = true
+      script.defer = true
+      script.onload = () => {
+        setRecaptchaLoaded(true)
+      }
+      script.onerror = () => {
+        console.error('Failed to load reCAPTCHA script')
+        setErrors(prev => ({ ...prev, recaptcha: 'reCAPTCHA failed to load' }))
+      }
+      document.head.appendChild(script)
+    }
+
+    // Check if script is already loaded
+    if (!document.querySelector(`script[src*="recaptcha/api.js"]`)) {
+      loadRecaptcha()
+    } else {
+      setRecaptchaLoaded(true)
+    }
+
+    // No cleanup needed - reCAPTCHA scripts should persist
+  }, [isValidSiteKey, recaptchaSiteKey])
+
+  // Execute reCAPTCHA v3
+  const executeRecaptcha = async (): Promise<string | null> => {
+    if (!recaptchaLoaded || !window.grecaptcha || !isValidSiteKey) {
+      return null
+    }
+
+    try {
+      const token = await window.grecaptcha.execute(recaptchaSiteKey, { action: 'contact_form' })
+      return token
+    } catch (error) {
+      console.error('reCAPTCHA execution failed:', error)
+      return null
+    }
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+
+    // Real-time validation and sanitization
+    let sanitizedValue = value
+
+    // Sanitize phone input (only allow digits, format for Indian numbers)
+    if (name === 'phone') {
+      sanitizedValue = value.replace(/\D/g, '').slice(0, 10)
+      // Real-time validation for Indian phone numbers
+      if (sanitizedValue.length > 0 && !/^[6-9]/.test(sanitizedValue)) {
+        // Don't update if first digit is invalid
+        return
+      }
+    }
+
+    // Sanitize name input (only allow letters, spaces, and common name characters)
+    if (name === 'name') {
+      sanitizedValue = value.replace(/[^a-zA-Z\s'-]/g, '').slice(0, 50)
+      // Prevent multiple consecutive spaces
+      sanitizedValue = sanitizedValue.replace(/\s{2,}/g, ' ')
+    }
+
+    // Sanitize email input (basic format validation)
+    if (name === 'email') {
+      sanitizedValue = value.toLowerCase().trim().slice(0, 100)
+      // Remove invalid email characters
+      sanitizedValue = sanitizedValue.replace(/[^a-zA-Z0-9@._+-]/g, '')
+    }
+
+    // Sanitize message input (remove potential script tags and limit length)
+    if (name === 'message') {
+      sanitizedValue = value
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove script tags
+        .replace(/[<>]/g, '') // Remove angle brackets
+        .slice(0, 1000)
+    }
+
+    // Sanitize organization name
+    if (name === 'customOrganization') {
+      sanitizedValue = value.replace(/[^a-zA-Z0-9\s&.-]/g, '').slice(0, 50)
+    }
+
+    // Update form data and clear errors for this field
+    setFormData(prev => ({ ...prev, [name]: sanitizedValue }))
     setErrors(prev => ({ ...prev, [name]: '' }))
   }
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
 
-    if (!formData.name.trim()) newErrors.name = 'Full name is required'
+    // Name validation - strict
+    if (!formData.name.trim()) {
+      newErrors.name = 'Full name is required'
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = 'Name must be at least 2 characters'
+    } else if (formData.name.trim().length > 50) {
+      newErrors.name = 'Name must be less than 50 characters'
+    } else if (!/^[a-zA-Z\s]+$/.test(formData.name.trim())) {
+      newErrors.name = 'Name can only contain letters and spaces'
+    }
+
+    // Email validation - strict
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Enter a valid email address'
+    } else {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+      const email = formData.email.trim()
+
+      if (!emailRegex.test(email)) {
+        newErrors.email = 'Enter a valid email address (e.g., name@domain.com)'
+      } else if (email.length > 100) {
+        newErrors.email = 'Email must be less than 100 characters'
+      } else if (email.includes('..') || email.startsWith('.') || email.endsWith('.')) {
+        newErrors.email = 'Email format is invalid'
+      } else if (email.split('@').length !== 2) {
+        newErrors.email = 'Email must contain exactly one @ symbol'
+      }
     }
 
+    // Phone validation - strict Indian format
     if (!formData.phone.trim()) {
       newErrors.phone = 'Phone number is required'
-    } else if (!/^[6-9]\d{9}$/.test(formData.phone)) {
-      newErrors.phone = 'Enter a valid 10-digit Indian phone number'
+    } else {
+      const cleanPhone = formData.phone.replace(/\D/g, '') // Remove non-digits
+      if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+        newErrors.phone = 'Enter a valid 10-digit Indian mobile number (starting with 6-9)'
+      }
     }
 
-    if (!formData.organizationType) newErrors.organizationType = 'Please select your organization type'
-    if (formData.organizationType === 'Others' && !formData.customOrganization.trim())
-      newErrors.customOrganization = 'Please specify your organization type'
+    // Organization validation - strict
+    if (!formData.organizationType) {
+      newErrors.organizationType = 'Please select your organization type'
+    }
 
-    if (!formData.message.trim()) newErrors.message = 'Message is required'
-    if (!recaptchaToken) newErrors.recaptcha = 'Please verify you are not a robot'
+    if (formData.organizationType === 'Others') {
+      if (!formData.customOrganization.trim()) {
+        newErrors.customOrganization = 'Please specify your organization type'
+      } else if (formData.customOrganization.trim().length < 2) {
+        newErrors.customOrganization = 'Organization type must be at least 2 characters'
+      } else if (formData.customOrganization.trim().length > 50) {
+        newErrors.customOrganization = 'Organization type must be less than 50 characters'
+      }
+    }
+
+    // Message validation - strict
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required'
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = 'Message must be at least 10 characters'
+    } else if (formData.message.trim().length > 1000) {
+      newErrors.message = 'Message must be less than 1000 characters'
+    }
+
+    // reCAPTCHA v3 validation
+    if (!isValidSiteKey) {
+      newErrors.recaptcha = 'reCAPTCHA configuration error. Please contact support.'
+    } else if (!recaptchaLoaded) {
+      newErrors.recaptcha = 'reCAPTCHA is loading. Please wait a moment.'
+    }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -69,9 +223,18 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
     setIsSubmitting(true)
 
     try {
+      // Execute reCAPTCHA v3 before sending
+      const recaptchaToken = await executeRecaptcha()
+
+      if (!recaptchaToken) {
+        toast.error('reCAPTCHA verification failed. Please try again.')
+        setIsSubmitting(false)
+        return
+      }
+
       const result = await sendContactMessage({
         ...formData,
-        recaptchaToken: recaptchaToken as string
+        recaptchaToken
       })
 
       if (result.success) {
@@ -89,6 +252,7 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
         toast.error(result.error || 'Failed to send message')
       }
     } catch (error) {
+      console.error('Form submission error:', error)
       toast.error('Failed to send message. Please try again.')
     } finally {
       setIsSubmitting(false)
@@ -185,23 +349,61 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
         )}
 
         {/* Message */}
-        <FormField
-          label="Message *"
-          name="message"
-          value={formData.message}
-          onChange={handleChange}
-          error={errors.message}
-          placeholder="Tell us how we can help you..."
-          isTextarea
-          required
-        />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+            Message * ({formData.message.length}/1000 characters)
+          </label>
+          <div className="relative">
+            <textarea
+              id="message"
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              required
+              rows={5}
+              className="input-field pl-3 resize-none"
+              placeholder="Tell us how we can help you... (minimum 10 characters)"
+            />
+          </div>
+          {errors.message && <p className="text-sm text-red-500 mt-1">{errors.message}</p>}
+          <p className="text-xs text-gray-500 mt-1">
+            {formData.message.length < 10 ? `${10 - formData.message.length} more characters needed` :
+             formData.message.length > 900 ? `${1000 - formData.message.length} characters remaining` : ''}
+          </p>
+        </motion.div>
 
-        {/* reCAPTCHA aligned left */}
+        {/* reCAPTCHA v3 Status */}
         <div className="mt-4">
-          <ReCAPTCHA
-            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
-            onChange={token => setRecaptchaToken(token)}
-          />
+          {isValidSiteKey ? (
+            <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+              <div className="flex items-center space-x-2">
+                {recaptchaLoaded ? (
+                  <>
+                    <span className="text-green-500">✓</span>
+                    <span className="text-green-700 text-sm">Protected by reCAPTCHA</span>
+                  </>
+                ) : (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-500"></div>
+                    <span className="text-green-700 text-sm">Loading reCAPTCHA...</span>
+                  </>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-red-600 text-sm">
+                ⚠️ reCAPTCHA configuration error. Site key: {recaptchaSiteKey ? 'Invalid format' : 'Missing'}
+              </p>
+              <p className="text-gray-600 text-xs mt-1">
+                Please check your environment variables or contact support.
+              </p>
+            </div>
+          )}
           {errors.recaptcha && <p className="text-sm text-red-500 mt-1">{errors.recaptcha}</p>}
         </div>
 
