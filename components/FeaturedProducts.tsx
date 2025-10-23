@@ -27,9 +27,31 @@ export default function FeaturedProducts() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        // Only fetch products marked as featured in Sanity
-        const data = await client.fetch(queries.featuredProducts)
-        setProducts(data || [])
+        // Debug: Check all products first
+        const allProducts = await client.fetch(`*[_type == "product"] { _id, name, isFeatured, isOutOfStock }`)
+        console.log('All products in Sanity:', allProducts)
+
+        // Debug: Check featured products (including out of stock)
+        const featuredAll = await client.fetch(`*[_type == "product" && isFeatured == true] { _id, name, isFeatured, isOutOfStock }`)
+        console.log('Featured products (all):', featuredAll)
+
+        // Try without isOutOfStock filter first
+        const featuredProducts = await client.fetch(`*[_type == "product" && isFeatured == true] | order(_createdAt desc)[0...6] {
+          _id,
+          name,
+          slug,
+          price,
+          discount,
+          image,
+          shortDescription,
+          benefits,
+          certifications,
+          isOutOfStock,
+          isFeatured
+        }`)
+        console.log('Featured products query result:', featuredProducts)
+
+        setProducts(featuredProducts || [])
       } catch (error) {
         console.error('Error fetching featured products:', error)
       } finally {

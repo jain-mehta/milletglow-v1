@@ -28,7 +28,7 @@ interface RelatedProductsProps {
 
 export default function RelatedProducts({
   currentProductId,
-  title = "Related Products",
+  title = "You May Also Like",
   showViewAll = true
 }: RelatedProductsProps) {
   const [products, setProducts] = useState<Product[]>([])
@@ -90,9 +90,37 @@ export default function RelatedProducts({
     )
   }
 
-  // Don't show section if no products
-  if (products.length === 0) {
-    return null
+  // Show message if no products found
+  if (!loading && products.length === 0) {
+    return (
+      <section className="py-16 bg-gray-50">
+        <div className="container">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <h2 className="text-3xl font-bold text-primary-900 mb-4">
+              {title}
+            </h2>
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">🌾</div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                No Related Products Available
+              </h3>
+              <p className="text-gray-600 mb-8">
+                Check out our complete product collection instead
+              </p>
+              <Link href="/products" className="btn-primary">
+                View All Products
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    )
   }
 
   return (
@@ -109,7 +137,7 @@ export default function RelatedProducts({
             {title}
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Discover more premium millet products that might interest you
+            Discover more premium millet products handpicked for you
           </p>
         </motion.div>
 
