@@ -12,9 +12,10 @@ interface ProductCardProps {
     name: string
     slug: { current: string }
     price: number
+    discount?: number
     image: any
     shortDescription?: string
-    category: string
+    certifications?: string[]
     isOutOfStock: boolean
     isFeatured: boolean
   }
@@ -32,9 +33,11 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
   }
 
-  // Static 10% discount
-  const discountPercentage = 10
-  const discountedPrice = product.price - product.price * (discountPercentage / 100)
+  // Dynamic discount from Sanity
+  const discountPercentage = product.discount || 0
+  const discountedPrice = discountPercentage > 0
+    ? product.price - (product.price * (discountPercentage / 100))
+    : product.price
 
   return (
     <motion.div
@@ -53,7 +56,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                 src={urlFor(product.image).url()}
                 alt={product.name}
                 fill
-                className="object-contain z-10 transition-transform duration-300 group-hover:scale-105"
+                className="object-cover z-10 transition-transform duration-300 group-hover:scale-105"
               />
             )}
           </div>
@@ -68,29 +71,59 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                 {product.shortDescription || 'Discover the goodness of millet in every bite'}
               </p>
 
-              {/* Example Badges (static) */}
-              <div className="flex flex-wrap gap-2 mb-3">
-                <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-yellow-50 text-yellow-800 border border-yellow-100">
-                  Gluten-Free
-                </span>
-                <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-50 text-green-800 border border-green-100">
-                  Organic
-                </span>
-              </div>
+              {/* Custom Certifications & Badges */}
+              {product.certifications && product.certifications.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {product.certifications.slice(0, 3).map((cert, index) => {
+                    // Generate consistent colors based on cert text
+                    const colorVariants = [
+                      'bg-green-50 text-green-800 border-green-100',
+                      'bg-blue-50 text-blue-800 border-blue-100',
+                      'bg-purple-50 text-purple-800 border-purple-100',
+                      'bg-yellow-50 text-yellow-800 border-yellow-100',
+                      'bg-pink-50 text-pink-800 border-pink-100',
+                      'bg-indigo-50 text-indigo-800 border-indigo-100',
+                      'bg-orange-50 text-orange-800 border-orange-100',
+                      'bg-emerald-50 text-emerald-800 border-emerald-100'
+                    ]
+
+                    // Use cert length and first character to determine color consistently
+                    const colorIndex = (cert.length + cert.charCodeAt(0)) % colorVariants.length
+                    const colors = colorVariants[colorIndex]
+
+                    return (
+                      <span
+                        key={index}
+                        className={`px-2 py-0.5 text-xs font-medium rounded-full border ${colors}`}
+                      >
+                        {cert}
+                      </span>
+                    )
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Price + Discount */}
-            <div className="mt-auto flex items-center gap-2">
-              <span className="text-gray-400 line-through text-sm">
+            {discountPercentage > 0 ? (
+              <>
+                <div className="mt-auto flex items-center gap-2">
+                  <span className="text-gray-400 line-through text-sm">
+                    {formatPrice(product.price)}
+                  </span>
+                  <span className="text-primary-600 font-semibold text-sm bg-primary-50 px-2 py-0.5 rounded-md">
+                    -{discountPercentage}%
+                  </span>
+                </div>
+                <span className="text-primary-600 font-bold text-xl">
+                  {formatPrice(discountedPrice)}
+                </span>
+              </>
+            ) : (
+              <span className="text-primary-600 font-bold text-xl mt-auto">
                 {formatPrice(product.price)}
               </span>
-              <span className="text-primary-600 font-semibold text-sm bg-primary-50 px-2 py-0.5 rounded-md">
-                -{discountPercentage}%
-              </span>
-            </div>
-            <span className="text-primary-600 font-bold text-xl">
-              {formatPrice(discountedPrice)}
-            </span>
+            )}
           </div>
         </div>
       </Link>

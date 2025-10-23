@@ -48,7 +48,7 @@ export default function LoadingScreen() {
           >
             {/* Logo Circle Background */}
             <div className="w-24 h-24 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center shadow-lg">
-              <Image src={LogoImage} alt={'logo'} fill className='object-contains' />
+              <Image src={LogoImage} alt={'logo'} fill className='object-contain' />
 
             </div>
 

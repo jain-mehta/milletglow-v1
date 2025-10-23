@@ -116,7 +116,7 @@ export default function Testimonials() {
           className="text-center mb-16"
         >
           <h2 className="section-title text-primary-900">
-            What Our Customers Say
+            Celebrity Reviews
           </h2>
           <p className="section-subtitle">
             Real experiences from real people who have transformed their health with our millet products
@@ -145,7 +145,7 @@ export default function Testimonials() {
                       src={urlFor(testimonial.customerImage).width(100).height(100).url()}
                       alt={testimonial.customerName}
                       fill
-                      className="rounded-xl object-cotain"
+                      className="rounded-xl object-cover"
                     />
                   ) : (
                     <div className="w-16 h-16 bg-gradient-to-br from-primary-400 to-secondary-400 rounded-full flex items-center justify-center text-white font-semibold text-lg">

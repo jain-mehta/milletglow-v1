@@ -43,49 +43,6 @@ export default defineConfig({
                           .filter('_type == "product" && isOutOfStock == true')
                           .defaultOrdering([{field: '_updatedAt', direction: 'desc'}])
                       ),
-                    S.listItem()
-                      .title('By Category')
-                      .child(
-                        S.list()
-                          .title('Products by Category')
-                          .items([
-                            S.listItem()
-                              .title('Millet Flour/Powder')
-                              .child(
-                                S.documentList()
-                                  .title('Millet Flour Products')
-                                  .filter('_type == "product" && category == "millet-flour"')
-                              ),
-                            S.listItem()
-                              .title('Whole Millet Grains')
-                              .child(
-                                S.documentList()
-                                  .title('Whole Grain Products')
-                                  .filter('_type == "product" && category == "millet-grains"')
-                              ),
-                            S.listItem()
-                              .title('Millet Snacks')
-                              .child(
-                                S.documentList()
-                                  .title('Millet Snack Products')
-                                  .filter('_type == "product" && category == "millet-snacks"')
-                              ),
-                            S.listItem()
-                              .title('Millet Mix/Blend')
-                              .child(
-                                S.documentList()
-                                  .title('Millet Mix Products')
-                                  .filter('_type == "product" && category == "millet-mix"')
-                              ),
-                            S.listItem()
-                              .title('Ready-to-Cook')
-                              .child(
-                                S.documentList()
-                                  .title('Ready-to-Cook Products')
-                                  .filter('_type == "product" && category == "ready-to-cook"')
-                              ),
-                          ])
-                      ),
                   ])
               ),
 
@@ -178,7 +135,7 @@ export default defineConfig({
                         S.documentList()
                           .title('Approved Testimonials')
                           .filter('_type == "testimonial" && status == "approved"')
-                          .defaultOrdering([{field: 'submittedAt', direction: 'desc'}])
+                          .defaultOrdering([{field: 'approvedAt', direction: 'desc'}])
                       ),
                     S.listItem()
                       .title('Pending Review')
@@ -186,7 +143,7 @@ export default defineConfig({
                         S.documentList()
                           .title('Pending Testimonials')
                           .filter('_type == "testimonial" && status == "pending"')
-                          .defaultOrdering([{field: 'submittedAt', direction: 'asc'}])
+                          .defaultOrdering([{field: '_createdAt', direction: 'asc'}])
                       ),
                     S.listItem()
                       .title('Featured Reviews')
@@ -202,47 +159,11 @@ export default defineConfig({
                         S.documentList()
                           .title('Verified Testimonials')
                           .filter('_type == "testimonial" && isVerified == true')
-                          .defaultOrdering([{field: 'submittedAt', direction: 'desc'}])
+                          .defaultOrdering([{field: 'approvedAt', direction: 'desc'}])
                       ),
                   ])
               ),
 
-            // Banners section
-            S.listItem()
-              .title('🎯 Banners')
-              .child(
-                S.list()
-                  .title('Banner Management')
-                  .items([
-                    S.listItem()
-                      .title('All Banners')
-                      .child(S.documentTypeList('banner').title('All Banners')),
-                    S.listItem()
-                      .title('Active Banners')
-                      .child(
-                        S.documentList()
-                          .title('Active Banners')
-                          .filter('_type == "banner" && isActive == true')
-                          .defaultOrdering([{field: 'priority', direction: 'desc'}])
-                      ),
-                    S.listItem()
-                      .title('Hero Banners')
-                      .child(
-                        S.documentList()
-                          .title('Hero Banners')
-                          .filter('_type == "banner" && bannerType == "hero"')
-                          .defaultOrdering([{field: 'priority', direction: 'desc'}])
-                      ),
-                    S.listItem()
-                      .title('Promotional Banners')
-                      .child(
-                        S.documentList()
-                          .title('Promotional Banners')
-                          .filter('_type == "banner" && bannerType == "promotional"')
-                          .defaultOrdering([{field: '_updatedAt', direction: 'desc'}])
-                      ),
-                  ])
-              ),
 
             S.divider(),
 
@@ -310,7 +231,7 @@ export default defineConfig({
                                 S.documentList()
                                   .title('Recent Testimonials')
                                   .filter('_type == "testimonial"')
-                                  .defaultOrdering([{field: 'submittedAt', direction: 'desc'}])
+                                  .defaultOrdering([{field: '_createdAt', direction: 'desc'}])
                               ),
                           ])
                       ),

@@ -32,20 +32,22 @@ export const queries = {
     name,
     slug,
     price,
+    discount,
     image,
     shortDescription,
-    description,
     benefits,
-    category,
+    certifications,
     isFeatured,
     isOutOfStock,
-    weight,
     nutritionFacts {
       energy,
       protein,
       carbohydrates,
       fiber,
-      fat
+      fat,
+      sodium,
+      iron,
+      calcium
     }
   }`,
 
@@ -54,31 +56,25 @@ export const queries = {
     name,
     slug,
     price,
+    discount,
     image,
     gallery,
-    description,
     shortDescription,
     benefits,
-    ingredients,
     nutritionFacts,
-    category,
+    certifications,
     isFeatured,
     isOutOfStock,
-    weight,
-    shelfLife,
-    origin,
-    certifications,
-    seo,
-    "relatedProducts": *[_type == "product" && slug.current != $slug && category == ^.category && !isOutOfStock][0...4] {
+    "relatedProducts": *[_type == "product" && slug.current != $slug && !isOutOfStock][0...4] {
       _id,
       name,
       slug,
       price,
+      discount,
       image,
       shortDescription,
       benefits[0...3],
-      category,
-      weight,
+      certifications,
       isOutOfStock,
       isFeatured
     }
@@ -89,26 +85,13 @@ export const queries = {
     name,
     slug,
     price,
+    discount,
     image,
-    description,
     shortDescription,
     benefits,
-    category,
-    weight,
+    certifications,
     isOutOfStock,
     isFeatured
-  }`,
-
-  productsByCategory: `*[_type == "product" && category == $category && !isOutOfStock] | order(isFeatured desc, _createdAt desc) {
-    _id,
-    name,
-    slug,
-    price,
-    image,
-    shortDescription,
-    benefits[0...2],
-    isFeatured,
-    weight
   }`,
 
   // Blog posts
@@ -135,22 +118,12 @@ export const queries = {
     slug,
     excerpt,
     featuredImage,
-    gallery,
     content,
     publishedAt,
     author,
     category,
     tags,
     readingTime,
-    relatedProducts[]-> {
-      _id,
-      name,
-      slug,
-      price,
-      image,
-      shortDescription
-    },
-    seo,
     "relatedPosts": *[_type == "blog" && slug.current != $slug && isPublished == true && category == ^.category][0...3] {
       _id,
       title,
@@ -190,45 +163,21 @@ export const queries = {
   }`,
 
   // Testimonials
-  allTestimonials: `*[_type == "testimonial" && status == "approved"] | order(isFeatured desc, submittedAt desc) {
+  allTestimonials: `*[_type == "testimonial" && status == "approved"] | order(isFeatured desc, approvedAt desc) {
     _id,
     customerName,
     customerImage,
     rating,
     reviewText,
-    reviewTitle,
     customerInfo {
-      location,
-      age
+      location
     },
-    relatedProducts[]-> {
-      name,
-      slug
-    },
-    benefitsExperienced,
     isFeatured,
     isVerified,
-    submittedAt
+    approvedAt
   }`,
 
-  featuredTestimonials: `*[_type == "testimonial" && status == "approved" && isFeatured == true && showOnHomepage == true] | order(rating desc, submittedAt desc)[0...6] {
-    _id,
-    customerName,
-    customerImage,
-    rating,
-    reviewText,
-    reviewTitle,
-    customerInfo {
-      location
-    },
-    benefitsExperienced[0...3],
-    isVerified,
-    relatedProducts[]-> {
-      name
-    }
-  }`,
-
-  testimonialsByProduct: `*[_type == "testimonial" && status == "approved" && references($productId)] | order(rating desc, submittedAt desc) {
+  featuredTestimonials: `*[_type == "testimonial" && status == "approved" && isFeatured == true && showOnHomepage == true] | order(rating desc, approvedAt desc)[0...6] {
     _id,
     customerName,
     customerImage,
@@ -237,73 +186,20 @@ export const queries = {
     customerInfo {
       location
     },
-    benefitsExperienced,
+    isVerified
+  }`,
+
+  testimonialsByProduct: `*[_type == "testimonial" && status == "approved" && references($productId)] | order(rating desc, approvedAt desc) {
+    _id,
+    customerName,
+    customerImage,
+    rating,
+    reviewText,
+    customerInfo {
+      location
+    },
     isVerified,
-    submittedAt
-  }`,
-
-  // Banners
-  activeBanners: `*[_type == "banner" && isActive == true &&
-    (!defined(schedule.startDate) || schedule.startDate <= now()) &&
-    (!defined(schedule.endDate) || schedule.endDate >= now())] | order(priority desc, _createdAt desc) {
-    _id,
-    title,
-    subtitle,
-    backgroundImage,
-    mobileImage,
-    overlayColor,
-    contentPosition,
-    textColor,
-    primaryCTA,
-    secondaryCTA,
-    bannerType,
-    placement,
-    targetAudience,
-    priority,
-    showOnMobile,
-    showOnDesktop,
-    altText,
-    trackingId
-  }`,
-
-  bannersByPlacement: `*[_type == "banner" && isActive == true && $placement in placement &&
-    (!defined(schedule.startDate) || schedule.startDate <= now()) &&
-    (!defined(schedule.endDate) || schedule.endDate >= now())] | order(priority desc, _createdAt desc) {
-    _id,
-    title,
-    subtitle,
-    backgroundImage,
-    mobileImage,
-    overlayColor,
-    contentPosition,
-    textColor,
-    primaryCTA,
-    secondaryCTA,
-    bannerType,
-    priority,
-    showOnMobile,
-    showOnDesktop,
-    altText,
-    trackingId
-  }`,
-
-  heroBanner: `*[_type == "banner" && isActive == true && "homepage-hero" in placement &&
-    (!defined(schedule.startDate) || schedule.startDate <= now()) &&
-    (!defined(schedule.endDate) || schedule.endDate >= now())] | order(priority desc)[0] {
-    _id,
-    title,
-    subtitle,
-    backgroundImage,
-    mobileImage,
-    overlayColor,
-    contentPosition,
-    textColor,
-    primaryCTA,
-    secondaryCTA,
-    showOnMobile,
-    showOnDesktop,
-    altText,
-    trackingId
+    approvedAt
   }`,
 
 }

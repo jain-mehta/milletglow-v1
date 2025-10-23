@@ -48,16 +48,28 @@ export default {
       validation: (Rule: any) => Rule.required().positive()
     },
     {
-      name: 'description',
-      title: 'Product Description',
-      type: 'text',
-      validation: (Rule: any) => Rule.required()
+      name: 'discount',
+      title: 'Discount Percentage',
+      type: 'number',
+      validation: (Rule: any) => Rule.min(0).max(100),
+      description: 'Enter discount percentage (0-100). Leave empty for no discount.'
     },
     {
       name: 'shortDescription',
       title: 'Short Description',
       type: 'string',
-      validation: (Rule: any) => Rule.max(100)
+      validation: (Rule: any) => Rule.required().max(100),
+      description: 'Brief description shown on product cards'
+    },
+    {
+      name: 'certifications',
+      title: 'Certifications & Badges',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: {
+        layout: 'tags'
+      },
+      description: 'Add custom certifications and quality badges (type and press Enter)'
     },
     {
       name: 'nutritionFacts',
@@ -110,46 +122,8 @@ export default {
       name: 'benefits',
       title: 'Health Benefits',
       type: 'array',
-      of: [{ type: 'string' }]
-    },
-    {
-      name: 'ingredients',
-      title: 'Ingredients List',
-      type: 'array',
-      of: [{ type: 'string' }]
-    },
-    {
-      name: 'category',
-      title: 'Product Category',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Millet Flour/Powder', value: 'millet-flour' },
-          { title: 'Whole Millet Grains', value: 'millet-grains' },
-          { title: 'Millet Snacks', value: 'millet-snacks' },
-          { title: 'Millet Mix/Blend', value: 'millet-mix' },
-          { title: 'Ready-to-Cook', value: 'ready-to-cook' }
-        ]
-      },
-      validation: (Rule: any) => Rule.required()
-    },
-    {
-      name: 'weight',
-      title: 'Package Weight',
-      type: 'string',
-      placeholder: 'e.g., 1kg, 500g, 250g'
-    },
-    {
-      name: 'shelfLife',
-      title: 'Shelf Life',
-      type: 'string',
-      placeholder: 'e.g., 12 months, 6 months'
-    },
-    {
-      name: 'origin',
-      title: 'Origin',
-      type: 'string',
-      placeholder: 'e.g., Karnataka, Andhra Pradesh'
+      of: [{ type: 'string' }],
+      description: 'List key health benefits of this product'
     },
     {
       name: 'isOutOfStock',
@@ -168,7 +142,24 @@ export default {
     select: {
       title: 'name',
       media: 'image',
-      subtitle: 'category'
+      price: 'price',
+      discount: 'discount',
+      isOutOfStock: 'isOutOfStock',
+      isFeatured: 'isFeatured'
+    },
+    prepare(selection: any) {
+      const { title, media, price, discount, isOutOfStock, isFeatured } = selection
+
+      let subtitle = `₹${price}`
+      if (discount) subtitle += ` (-${discount}%)`
+      if (isOutOfStock) subtitle += ' • OUT OF STOCK'
+      if (isFeatured) subtitle += ' • FEATURED'
+
+      return {
+        title,
+        media,
+        subtitle
+      }
     }
   }
 }

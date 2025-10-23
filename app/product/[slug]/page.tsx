@@ -6,7 +6,7 @@ import { Award, Check, ChevronDown, Leaf } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { client, queries, urlFor } from '@/sanity/client'
-import FeaturedProducts from '@/components/FeaturedProducts'
+import RelatedProducts from '@/components/RelatedProducts'
 
 interface ProductDetailProps {
   params: {
@@ -19,15 +19,13 @@ interface Product {
   name: string
   slug: { current: string }
   price: number
+  discount?: number
   image: any
   gallery?: any[]
-  description: string
   shortDescription: string
   benefits?: string[]
-  ingredients?: string[]
   nutritionFacts?: Record<string, any>
-  category: string
-  weight: string
+  certifications?: string[]
   isOutOfStock: boolean
 }
 
@@ -78,8 +76,12 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
   if (!product) return notFound()
 
   const allImages = product.gallery?.length ? product.gallery : [product.image]
-  const discount = 10
-  const discountedPrice = (product.price * (1 - discount / 100)).toFixed(2)
+
+  // Dynamic discount from Sanity
+  const discountPercentage = product.discount || 0
+  const discountedPrice = discountPercentage > 0
+    ? product.price - (product.price * (discountPercentage / 100))
+    : product.price
 
   return (
     <div className="min-h-screen pt-20 bg-white">
@@ -191,32 +193,57 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
 
             {/* PRICE SECTION */}
             <div className="pt-4">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400 line-through text-lg">₹{product.price.toFixed(2)}</span>
-                <span className="text-sm bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">
-                  -{discount}%
-                </span>
-              </div>
-              <div className="text-3xl font-bold text-gray-900">₹{discountedPrice}</div>
+              {discountPercentage > 0 ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-400 line-through text-lg">₹{product.price.toFixed(2)}</span>
+                    <span className="text-sm bg-primary-50 text-primary-700 px-2 py-0.5 rounded font-medium">
+                      -{discountPercentage}%
+                    </span>
+                  </div>
+                  <div className="text-3xl font-bold text-primary-600">₹{discountedPrice.toFixed(2)}</div>
+                </>
+              ) : (
+                <div className="text-3xl font-bold text-primary-600">₹{product.price.toFixed(2)}</div>
+              )}
             </div>
 
-            <div className="flex items-center gap-6 text-gray-700 pt-2">
-              <div className="flex items-center gap-2">
-                <Leaf className="w-5 h-5 text-green-600" />
-                <span>100% Organic</span>
+            {/* Dynamic Certifications */}
+            {product.certifications && product.certifications.length > 0 && (
+              <div className="flex flex-wrap gap-3 pt-2">
+                {product.certifications.map((cert, index) => {
+                  // Generate consistent colors based on cert text (same logic as ProductCard)
+                  const colorVariants = [
+                    'bg-green-50 text-green-800 border-green-200',
+                    'bg-blue-50 text-blue-800 border-blue-200',
+                    'bg-purple-50 text-purple-800 border-purple-200',
+                    'bg-yellow-50 text-yellow-800 border-yellow-200',
+                    'bg-pink-50 text-pink-800 border-pink-200',
+                    'bg-indigo-50 text-indigo-800 border-indigo-200',
+                    'bg-orange-50 text-orange-800 border-orange-200',
+                    'bg-emerald-50 text-emerald-800 border-emerald-200'
+                  ]
+
+                  const colorIndex = (cert.length + cert.charCodeAt(0)) % colorVariants.length
+                  const colors = colorVariants[colorIndex]
+
+                  return (
+                    <div
+                      key={index}
+                      className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-full border ${colors}`}
+                    >
+                      <Award className="w-4 h-4" />
+                      <span>{cert}</span>
+                    </div>
+                  )
+                })}
               </div>
-              <div className="flex items-center gap-2">
-                <Award className="w-5 h-5 text-yellow-600" />
-                <span>Premium Quality</span>
-              </div>
-            </div>
+            )}
           </motion.div>
         </div>
 
-        {/* FEATURED PRODUCTS */}
-        <div className="mt-10">
-          <FeaturedProducts />
-        </div>
+        {/* RELATED PRODUCTS */}
+        <RelatedProducts currentProductId={product._id} />
       </div>
     </div>
   )

@@ -11,10 +11,11 @@ interface BlogPost {
   title: string
   slug: { current: string }
   excerpt: string
-  image: any
+  featuredImage: any
   publishedAt: string
   author: { name: string, image?: any }
   tags?: string[]
+  readingTime?: number
 }
 
 export default function BlogPage() {

@@ -42,13 +42,6 @@ export default {
       validation: (Rule: any) => Rule.required().min(20).max(500),
       description: 'Customer review text (20-500 characters for optimal display)'
     },
-    {
-      name: 'reviewTitle',
-      title: 'Review Title',
-      type: 'string',
-      validation: (Rule: any) => Rule.max(100),
-      description: 'Optional short headline for the review'
-    },
 
     // Customer Details
     {
@@ -61,46 +54,11 @@ export default {
           title: 'Location',
           type: 'string',
           description: 'City, State, or Country (e.g., "Mumbai, Maharashtra")'
-        },
-        {
-          name: 'age',
-          title: 'Age Group',
-          type: 'string',
-          options: {
-            list: [
-              { title: '18-25', value: '18-25' },
-              { title: '26-35', value: '26-35' },
-              { title: '36-45', value: '36-45' },
-              { title: '46-55', value: '46-55' },
-              { title: '56-65', value: '56-65' },
-              { title: '65+', value: '65+' }
-            ]
-          }
-        },
-        {
-          name: 'occupation',
-          title: 'Occupation',
-          type: 'string',
-          description: 'Customer profession (optional)'
         }
       ],
       description: 'Additional customer demographics for credibility'
     },
 
-    // Product Information
-    {
-      name: 'relatedProducts',
-      title: 'Products Reviewed',
-      type: 'array',
-      of: [
-        {
-          type: 'reference',
-          to: [{ type: 'product' }]
-        }
-      ],
-      validation: (Rule: any) => Rule.min(1),
-      description: 'Which products this review is about'
-    },
     {
       name: 'purchaseDetails',
       title: 'Purchase Information',
@@ -143,28 +101,6 @@ export default {
       ]
     },
 
-    // Review Categories & Benefits
-    {
-      name: 'benefitsExperienced',
-      title: 'Benefits Experienced',
-      type: 'array',
-      of: [{ type: 'string' }],
-      options: {
-        list: [
-          { title: 'Weight Management', value: 'weight-management' },
-          { title: 'Better Digestion', value: 'better-digestion' },
-          { title: 'Increased Energy', value: 'increased-energy' },
-          { title: 'Improved Skin Health', value: 'improved-skin' },
-          { title: 'Better Sleep', value: 'better-sleep' },
-          { title: 'Blood Sugar Control', value: 'blood-sugar-control' },
-          { title: 'Heart Health', value: 'heart-health' },
-          { title: 'Great Taste', value: 'great-taste' },
-          { title: 'Easy to Cook', value: 'easy-to-cook' },
-          { title: 'Family Friendly', value: 'family-friendly' }
-        ]
-      },
-      description: 'Specific benefits the customer experienced'
-    },
 
     // Moderation & Status
     {
@@ -228,14 +164,6 @@ export default {
       description: 'How this testimonial was collected'
     },
 
-    // Timestamps
-    {
-      name: 'submittedAt',
-      title: 'Submission Date',
-      type: 'datetime',
-      initialValue: () => new Date().toISOString(),
-      validation: (Rule: any) => Rule.required()
-    },
     {
       name: 'approvedAt',
       title: 'Approval Date',
@@ -279,7 +207,7 @@ export default {
       by: [
         { field: 'isFeatured', direction: 'desc' },
         { field: 'rating', direction: 'desc' },
-        { field: 'submittedAt', direction: 'desc' }
+        { field: 'approvedAt', direction: 'desc' }
       ]
     },
     {
@@ -287,14 +215,14 @@ export default {
       name: 'highestRated',
       by: [
         { field: 'rating', direction: 'desc' },
-        { field: 'submittedAt', direction: 'desc' }
+        { field: 'approvedAt', direction: 'desc' }
       ]
     },
     {
       title: 'Most Recent',
       name: 'mostRecent',
       by: [
-        { field: 'submittedAt', direction: 'desc' }
+        { field: 'approvedAt', direction: 'desc' }
       ]
     },
     {
@@ -302,7 +230,7 @@ export default {
       name: 'pendingReview',
       by: [
         { field: 'status', direction: 'asc' },
-        { field: 'submittedAt', direction: 'asc' }
+        { field: 'approvedAt', direction: 'asc' }
       ]
     }
   ]

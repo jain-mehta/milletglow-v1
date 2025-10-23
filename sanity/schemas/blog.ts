@@ -38,20 +38,6 @@ export default {
       validation: (Rule: any) => Rule.required(),
       description: 'Main image displayed in blog listing and detail page header'
     },
-    {
-      name: 'gallery',
-      title: 'Additional Images',
-      type: 'array',
-      of: [
-        {
-          type: 'image',
-          options: {
-            hotspot: true
-          }
-        }
-      ],
-      description: 'Additional images for the blog post content'
-    },
 
     // Content Section
     {
@@ -177,18 +163,6 @@ export default {
       },
       description: 'Keywords and topics covered in this post'
     },
-    {
-      name: 'relatedProducts',
-      title: 'Related Products',
-      type: 'array',
-      of: [
-        {
-          type: 'reference',
-          to: [{ type: 'product' }]
-        }
-      ],
-      description: 'Products mentioned or related to this blog post'
-    },
 
     // Author Information
     {
@@ -247,36 +221,6 @@ export default {
       description: 'Estimated reading time in minutes'
     },
 
-    // SEO Settings
-    {
-      name: 'seo',
-      title: 'SEO Settings',
-      type: 'object',
-      fields: [
-        {
-          name: 'metaTitle',
-          title: 'Meta Title',
-          type: 'string',
-          validation: (Rule: any) => Rule.max(60),
-          description: 'Title for search engines (max 60 chars)'
-        },
-        {
-          name: 'metaDescription',
-          title: 'Meta Description',
-          type: 'text',
-          validation: (Rule: any) => Rule.max(160),
-          description: 'Description for search engines (max 160 chars)'
-        },
-        {
-          name: 'keywords',
-          title: 'Focus Keywords',
-          type: 'array',
-          of: [{ type: 'string' }],
-          description: 'Primary keywords for SEO targeting'
-        }
-      ],
-      description: 'Search engine optimization settings'
-    }
   ],
 
   preview: {

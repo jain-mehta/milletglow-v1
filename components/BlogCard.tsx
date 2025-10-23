@@ -13,16 +13,17 @@ interface BlogCardProps {
     title: string
     slug: { current: string }
     excerpt: string
-    image: any
+    featuredImage: any
     publishedAt: string
     author: { name: string; image?: any }
     tags?: string[]
+    readingTime?: number
   }
   index?: number
 }
 
 export default function BlogCard({ post, index = 0 }: BlogCardProps) {
-  const readingTime = Math.max(1, Math.ceil(post.excerpt.length / 200)) // Rough estimate
+  const readingTime = post.readingTime || Math.max(1, Math.ceil(post.excerpt.length / 200)) // Use provided or estimate
 
   return (
     <motion.article
@@ -32,13 +33,13 @@ export default function BlogCard({ post, index = 0 }: BlogCardProps) {
       viewport={{ once: true }}
       className="group"
     >
-      <Link href={`/blog/${post.slug.current}`}>
+      <Link href={`/blogs/${post.slug.current}`}>
         <div className="card overflow-hidden h-full flex flex-col">
           {/* Featured Image */}
           <div className="relative h-48 overflow-hidden">
-            {post.image && (
+            {post.featuredImage && (
               <Image
-                src={urlFor(post.image).width(400).height(300).url()}
+                src={urlFor(post.featuredImage).width(400).height(300).url()}
                 alt={post.title}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-300"

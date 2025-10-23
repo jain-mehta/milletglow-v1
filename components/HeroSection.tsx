@@ -20,7 +20,7 @@ export default function HeroSection() {
           alt="Millet Glow Products"
           fill
           priority
-          className="object-cover opacity-40"
+          className="object-cover opacity-70"
         />
         {/* Overlay gradient for text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-white/60 via-white/30 to-white/70"></div>
