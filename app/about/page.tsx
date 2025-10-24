@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import ProductCard from '@/components/ProductCard'
 import Link from 'next/link'
+import RelatedBlogs from '@/components/RelatedBlogs'
 
 export default function AboutPage() {
   return (
@@ -108,6 +109,13 @@ export default function AboutPage() {
           </div>
         </motion.div>
       </div>
+
+      {/* Related Blogs Section */}
+      <RelatedBlogs
+        currentBlogSlug=""
+        title="Learn More About Millet"
+        showViewAll={true}
+      />
     </div>
   )
 }

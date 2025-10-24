@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import HeroSection from '@/components/HeroSection'
 import FeaturedProducts from '@/components/FeaturedProducts'
+import HowToBuy from '@/components/HowToBuy'
 import WhyChooseUs from '@/components/WhyChooseUs'
 import BenefitsSection from '@/components/BenefitsSection'
 import Testimonials from '@/components/Testimonials'
@@ -46,6 +47,14 @@ export default function HomePage() {
         rootMargin={LAZY_LOADING_CONFIG.CONTENT_SECTIONS}
       >
         <FeaturedProducts />
+      </LazyComponent>
+
+      {/* How to Buy Section */}
+      <LazyComponent
+        fallback={<div className="min-h-[400px] bg-gradient-to-br from-gray-50 to-white animate-pulse" />}
+        rootMargin={LAZY_LOADING_CONFIG.CONTENT_SECTIONS}
+      >
+        <HowToBuy />
       </LazyComponent>
 
       {/* Benefits Section */}

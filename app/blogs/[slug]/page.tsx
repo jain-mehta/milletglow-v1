@@ -8,6 +8,7 @@ import { PortableText } from '@portabletext/react'
 import { Calendar, User, Clock, Tag } from 'lucide-react'
 import { client, queries, urlFor } from '@/sanity/client'
 import { formatDate } from '@/lib/utils'
+import RelatedBlogs from '@/components/RelatedBlogs'
 
 interface BlogProps {
   params: { slug: string }
@@ -209,6 +210,13 @@ export default function BlogPage({ params }: BlogProps) {
           </div>
         </motion.div>
       </div>
+
+      {/* Related Blogs Section */}
+      <RelatedBlogs
+        currentBlogSlug={params.slug}
+        title="You Might Also Like"
+        showViewAll={true}
+      />
     </div>
   )
 }
