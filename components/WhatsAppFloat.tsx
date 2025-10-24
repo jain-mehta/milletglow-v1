@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { FaWhatsapp } from 'react-icons/fa'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'
+import { trackWhatsAppClick } from '@/lib/gtag'
 
 interface WhatsAppFloatProps {
   phoneNumber?: string
@@ -14,6 +15,9 @@ export default function WhatsAppFloat({
   message = 'Hi! I need help with your millet products.'
 }: WhatsAppFloatProps) {
   const handleWhatsAppClick = () => {
+    // Track WhatsApp click in Google Analytics
+    trackWhatsAppClick()
+
     const encodedMessage = encodeURIComponent(message)
     const cleanPhoneNumber = phoneNumber.replace(/[^\d+]/g, '')
     const whatsappUrl = `https://wa.me/${cleanPhoneNumber}?text=${encodedMessage}`

@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import ClientLayoutWrapper from './ClientLayoutWrapper'
+import GoogleAnalytics from '@/components/GoogleAnalytics'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -28,9 +29,14 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID
+
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
-      <body className="font-sans">
+      <body className="font-sans bg-white">
+        {/* Google Analytics */}
+        {GA_MEASUREMENT_ID && <GoogleAnalytics GA_MEASUREMENT_ID={GA_MEASUREMENT_ID} />}
+
         {/* delegate client-side logic here */}
         <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
       </body>

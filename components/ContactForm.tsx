@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Send, User, Mail, Phone, Building } from 'lucide-react'
 import { sendContactMessage } from '@/lib/mailchimp'
+import { trackContactSubmission } from '@/lib/gtag'
 import toast from 'react-hot-toast'
 
 // TypeScript declaration for reCAPTCHA v3
@@ -239,6 +240,12 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
 
       if (result.success) {
         toast.success('Message sent successfully! 🎉')
+
+        // Track contact form submission in Google Analytics
+        const organizationType = formData.organizationType === 'Others' ?
+          formData.customOrganization : formData.organizationType
+        trackContactSubmission(organizationType)
+
         setFormData({
           name: '',
           email: '',

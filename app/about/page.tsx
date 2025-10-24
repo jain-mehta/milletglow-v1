@@ -8,7 +8,7 @@ import Link from 'next/link'
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#FFF9F4]">
+    <div className="min-h-screen bg-white">
       <div className="container mx-auto px-6 md:px-12 lg:px-20 py-20">
         {/* Hero Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">

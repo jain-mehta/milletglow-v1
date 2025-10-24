@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { urlFor } from '@/sanity/client'
 import { formatPrice, generateWhatsAppUrl } from '@/lib/utils'
+import { trackProductInterest } from '@/lib/gtag'
 
 interface ProductCardProps {
   product: {
@@ -28,6 +29,10 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const handleWhatsAppOrder = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
+
+    // Track product interest in Google Analytics
+    trackProductInterest(product.name)
+
     const message = `Hi! I'm interested in ${product.name}. Can you provide more details about pricing and availability?`
     const whatsappUrl = generateWhatsAppUrl(whatsappNumber, message, product.name)
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer')

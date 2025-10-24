@@ -19,16 +19,22 @@ export default function HomePage() {
       <div className="bg-yellow-50 border-t border-b border-yellow-100 py-3 overflow-hidden relative">
         <motion.div
           className="flex whitespace-nowrap"
-          animate={{ x: ['0%', '-100%'] }}
+          animate={{ x: [0, -1000] }}
           transition={{
             repeat: Infinity,
-            duration: 15,
+            duration: 20,
             ease: 'linear',
           }}
         >
-          <span className="text-gray-800 font-medium text-base tracking-wide px-8">
-            {marqueeText} 
-          </span>
+          {/* Create multiple copies for seamless scrolling */}
+          {Array(6).fill(null).map((_, index) => (
+            <span
+              key={index}
+              className="text-gray-800 font-medium text-base tracking-wide px-8 flex-shrink-0"
+            >
+              {marqueeText} •
+            </span>
+          ))}
         </motion.div>
       </div>
 

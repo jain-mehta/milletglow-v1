@@ -5,7 +5,7 @@ import ContactForm from '@/components/ContactForm'
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#FFF8EE] to-white py-20 px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white py-20 px-4">
       {/* Header */}
       <div className="max-w-5xl w-full mb-10 text-center">
         <h1 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2">
