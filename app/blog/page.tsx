@@ -5,6 +5,8 @@ import { motion } from 'framer-motion'
 import { Calendar } from 'lucide-react'
 import { client, queries } from '@/sanity/client'
 import BlogCard from '@/components/BlogCard'
+import LazyComponent from '@/components/LazyComponent'
+import { LAZY_LOADING_CONFIG } from '@/lib/performance'
 
 interface BlogPost {
   _id: string
@@ -89,15 +91,33 @@ export default function BlogPage() {
       <section className="pb-16">
         <div className="container">
           {posts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {posts.map((post, index) => (
-                <BlogCard
-                  key={post._id}
-                  post={post}
-                  index={index}
-                />
-              ))}
-            </div>
+            <LazyComponent
+              fallback={
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div key={i} className="card">
+                      <div className="skeleton h-48 w-full mb-4"></div>
+                      <div className="p-6">
+                        <div className="skeleton h-6 w-32 mb-2"></div>
+                        <div className="skeleton h-4 w-full mb-4"></div>
+                        <div className="skeleton h-10 w-24"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              }
+              rootMargin={LAZY_LOADING_CONFIG.CONTENT_SECTIONS}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {posts.map((post, index) => (
+                  <BlogCard
+                    key={post._id}
+                    post={post}
+                    index={index}
+                  />
+                ))}
+              </div>
+            </LazyComponent>
           ) : (
             <motion.div
               initial={{ opacity: 0, y: 20 }}

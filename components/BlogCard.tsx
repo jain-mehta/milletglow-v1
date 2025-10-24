@@ -63,43 +63,43 @@ export default function BlogCard({ post, index = 0 }: BlogCardProps) {
           </div>
 
           {/* Content */}
-          <div className="p-6 flex-1 flex flex-col">
+          <div className="p-4 sm:p-6 flex-1 flex flex-col">
             {/* Meta Information */}
-            <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4 text-xs sm:text-sm text-gray-500 mb-2 sm:mb-3">
               <div className="flex items-center space-x-1">
-                <Calendar className="w-4 h-4" />
+                <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span>{formatDate(post.publishedAt)}</span>
               </div>
               <div className="flex items-center space-x-1">
-                <User className="w-4 h-4" />
+                <User className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span>{post.author.name}</span>
               </div>
             </div>
 
             {/* Title */}
-            <h3 className="text-xl font-semibold text-primary-900 mb-3 group-hover:text-primary-600 transition-colors line-clamp-2">
+            <h3 className="text-lg sm:text-xl font-semibold text-primary-900 mb-2 sm:mb-3 group-hover:text-primary-600 transition-colors line-clamp-2">
               {post.title}
             </h3>
 
             {/* Excerpt */}
-            <p className="text-gray-600 leading-relaxed mb-4 flex-1 line-clamp-3">
-              {truncateText(post.excerpt, 150)}
+            <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-3 sm:mb-4 flex-1 line-clamp-3">
+              {truncateText(post.excerpt, 120)}
             </p>
 
             {/* Read More Link */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2 text-primary-600 hover:text-primary-700 font-medium transition-colors group/link">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0">
+              <div className="flex items-center space-x-1 sm:space-x-2 text-primary-600 hover:text-primary-700 font-medium text-sm sm:text-base transition-colors group/link">
                 <span>Read More</span>
-                <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 group-hover/link:translate-x-1 transition-transform" />
               </div>
 
               {/* Additional Tags */}
               {post.tags && post.tags.length > 1 && (
                 <div className="flex space-x-1">
-                  {post.tags.slice(1, 3).map((tag) => (
+                  {post.tags.slice(1, 2).map((tag) => (
                     <span
                       key={tag}
-                      className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-md"
+                      className="text-xs bg-gray-100 text-gray-600 px-1.5 sm:px-2 py-1 rounded-md"
                     >
                       {tag}
                     </span>

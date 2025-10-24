@@ -7,6 +7,8 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { client, queries, urlFor } from '@/sanity/client'
 import RelatedProducts from '@/components/RelatedProducts'
+import LazyImage from '@/components/LazyImage'
+import { IMAGE_CONFIG } from '@/lib/performance'
 
 interface ProductDetailProps {
   params: {
@@ -118,12 +120,14 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
                       selectedImageIndex === idx ? 'border-yellow-500' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <Image
+                    <LazyImage
                       src={urlFor(img).url()}
                       alt={`${product.name}-${idx}`}
                       width={80}
                       height={80}
                       className="object-contain w-auto h-auto"
+                      quality={IMAGE_CONFIG.THUMBNAIL_QUALITY}
+                      sizes="80px"
                     />
                   </button>
                 ))}

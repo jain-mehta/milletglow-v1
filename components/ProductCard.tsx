@@ -53,9 +53,9 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
       className="group"
     >
       <Link href={`/product/${product.slug.current}`} className="block h-full">
-        <div className="bg-white rounded-2xl p-6 flex flex-col h-full shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+        <div className="bg-white rounded-2xl p-4 sm:p-6 flex flex-col h-full shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
           {/* Product Image Section */}
-          <div className="relative h-48 flex items-center justify-center mb-6 overflow-hidden rounded-lg bg-white">
+          <div className="relative h-40 sm:h-48 flex items-center justify-center mb-4 sm:mb-6 overflow-hidden rounded-lg bg-white">
             {product.image && (
               <Image
                 src={urlFor(product.image).url()}
@@ -69,17 +69,17 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           {/* Product Info */}
           <div className="flex-1 flex flex-col justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
                 {product.name}
               </h3>
-              <p className="text-gray-600 text-sm line-clamp-2 mb-3">
+              <p className="text-gray-600 text-xs sm:text-sm line-clamp-2 mb-2 sm:mb-3">
                 {product.shortDescription || 'Discover the goodness of millet in every bite'}
               </p>
 
               {/* Custom Certifications & Badges */}
               {product.certifications && product.certifications.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {product.certifications.slice(0, 3).map((cert, index) => {
+                <div className="flex flex-wrap gap-1 sm:gap-2 mb-2 sm:mb-3">
+                  {product.certifications.slice(0, 2).map((cert, index) => {
                     // Generate consistent colors based on cert text
                     const colorVariants = [
                       'bg-green-50 text-green-800 border-green-100',
@@ -99,7 +99,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                     return (
                       <span
                         key={index}
-                        className={`px-2 py-0.5 text-xs font-medium rounded-full border ${colors}`}
+                        className={`px-1.5 sm:px-2 py-0.5 text-xs font-medium rounded-full border ${colors}`}
                       >
                         {cert}
                       </span>
@@ -113,19 +113,19 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
             {discountPercentage > 0 ? (
               <>
                 <div className="mt-auto flex items-center gap-2">
-                  <span className="text-gray-400 line-through text-sm">
+                  <span className="text-gray-400 line-through text-xs sm:text-sm">
                     {formatPrice(product.price)}
                   </span>
-                  <span className="text-primary-600 font-semibold text-sm bg-primary-50 px-2 py-0.5 rounded-md">
+                  <span className="text-primary-600 font-semibold text-xs sm:text-sm bg-primary-50 px-1.5 sm:px-2 py-0.5 rounded-md">
                     -{discountPercentage}%
                   </span>
                 </div>
-                <span className="text-primary-600 font-bold text-xl">
+                <span className="text-primary-600 font-bold text-lg sm:text-xl">
                   {formatPrice(discountedPrice)}
                 </span>
               </>
             ) : (
-              <span className="text-primary-600 font-bold text-xl mt-auto">
+              <span className="text-primary-600 font-bold text-lg sm:text-xl mt-auto">
                 {formatPrice(product.price)}
               </span>
             )}

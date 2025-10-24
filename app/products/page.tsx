@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { client, queries } from '@/sanity/client'
 import ProductCard from '@/components/ProductCard'
+import LazyComponent from '@/components/LazyComponent'
+import { LAZY_LOADING_CONFIG } from '@/lib/performance'
 
 interface Product {
   _id: string
@@ -111,16 +113,32 @@ export default function ProductsPage() {
 
         {/* Product Grid */}
         {filteredProducts.length > 0 ? (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          <LazyComponent
+            fallback={
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="card p-6">
+                    <div className="skeleton h-48 w-full mb-4 rounded-lg"></div>
+                    <div className="skeleton h-6 w-32 mb-2"></div>
+                    <div className="skeleton h-4 w-full mb-4"></div>
+                    <div className="skeleton h-10 w-24"></div>
+                  </div>
+                ))}
+              </div>
+            }
+            rootMargin={LAZY_LOADING_CONFIG.CONTENT_SECTIONS}
           >
-            {filteredProducts.map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
+              {filteredProducts.map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </motion.div>
+          </LazyComponent>
         ) : (
           <div className="text-center text-gray-500 mt-16">
             No products found for your selection.

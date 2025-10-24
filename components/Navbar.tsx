@@ -32,11 +32,11 @@ export default function Navbar() {
         isScrolled ? 'bg-white shadow-md' : 'bg-white'
       }`}
     >
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* ✅ Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="relative w-28 h-10 md:w-48 md:h-24">
+          <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
+            <div className="relative w-24 h-8 sm:w-28 sm:h-10 md:w-48 md:h-24">
               <Image
                 src={LogoImage}
                 alt="Millet Glow Logo"
@@ -48,14 +48,14 @@ export default function Navbar() {
           </Link>
 
           {/* ✅ Center Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             {navigation.map((item) => {
               const isActive = pathname === item.href
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`relative font-medium text-gray-800 hover:text-primary-600 transition-colors duration-200 ${
+                  className={`relative font-medium text-sm lg:text-base text-gray-800 hover:text-primary-600 transition-colors duration-200 ${
                     isActive ? 'text-primary-600' : ''
                   }`}
                 >

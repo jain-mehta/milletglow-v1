@@ -6,6 +6,8 @@ import FeaturedProducts from '@/components/FeaturedProducts'
 import WhyChooseUs from '@/components/WhyChooseUs'
 import BenefitsSection from '@/components/BenefitsSection'
 import Testimonials from '@/components/Testimonials'
+import LazyComponent from '@/components/LazyComponent'
+import { LAZY_LOADING_CONFIG } from '@/lib/performance'
 
 export default function HomePage() {
   const marqueeText = "📦 For orders, click on the WhatsApp icon below! 💬 We’re happy to help you choose the best millet products!"
@@ -39,16 +41,36 @@ export default function HomePage() {
       </div>
 
       {/* Featured Products */}
-      <FeaturedProducts />
+      <LazyComponent
+        fallback={<div className="min-h-[500px] bg-white animate-pulse" />}
+        rootMargin={LAZY_LOADING_CONFIG.CONTENT_SECTIONS}
+      >
+        <FeaturedProducts />
+      </LazyComponent>
 
       {/* Benefits Section */}
-      <BenefitsSection />
+      <LazyComponent
+        fallback={<div className="min-h-[400px] bg-gradient-to-br from-primary-50 to-beige-50 animate-pulse" />}
+        rootMargin={LAZY_LOADING_CONFIG.CONTENT_SECTIONS}
+      >
+        <BenefitsSection />
+      </LazyComponent>
 
       {/* Why Choose Us */}
-      <WhyChooseUs />
+      <LazyComponent
+        fallback={<div className="min-h-[500px] bg-white animate-pulse" />}
+        rootMargin={LAZY_LOADING_CONFIG.CONTENT_SECTIONS}
+      >
+        <WhyChooseUs />
+      </LazyComponent>
 
       {/* Testimonials */}
-      <Testimonials />
+      <LazyComponent
+        fallback={<div className="min-h-[500px] bg-gradient-to-br from-primary-50 to-beige-50 animate-pulse" />}
+        rootMargin={LAZY_LOADING_CONFIG.CONTENT_SECTIONS}
+      >
+        <Testimonials />
+      </LazyComponent>
     </>
   )
 }
