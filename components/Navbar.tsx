@@ -12,6 +12,7 @@ const navigation = [
   { name: 'Products', href: '/products' },
   { name: 'About', href: '/about' },
   { name: 'Blog', href: '/blog' },
+  { name: 'Where to Buy', href: '/products' },
 ]
 
 export default function Navbar() {

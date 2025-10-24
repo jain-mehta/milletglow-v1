@@ -229,3 +229,8 @@
 .animate-accordion-up {
   animation: accordion-up 0.3s ease-out;
 }
+
+/* reCAPTCHA v2 Widget Styling */
+.g-recaptcha {
+  display: inline-block;
+}

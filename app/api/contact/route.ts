@@ -40,10 +40,14 @@ async function verifyRecaptcha(token: string): Promise<{ success: boolean; error
       return { success: false, error: 'reCAPTCHA verification failed' }
     }
 
-    if (data.score !== undefined && data.score <= 0.5) {
-      return { success: false, error: 'reCAPTCHA score too low' }
-    }
+    // reCAPTCHA v2 verification (success/failure only)
+    console.log(`🤖 reCAPTCHA v2 Analysis:`)
+    console.log(`   Success: ${data.success}`)
+    console.log(`   Challenge timestamp: ${data.challenge_ts}`)
+    console.log(`   Hostname: ${data.hostname}`)
 
+    // For v2, we only need to check success status
+    console.log(`✅ PASSED: reCAPTCHA v2 verification successful`)
     return { success: true }
   } catch (error) {
     console.error('❌ reCAPTCHA verification error:', error)

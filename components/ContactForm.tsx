@@ -1,17 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Send, User, Mail, Phone, Building } from 'lucide-react'
 import { sendContactMessage } from '@/lib/mailchimp'
 import { trackContactSubmission } from '@/lib/gtag'
 import toast from 'react-hot-toast'
 
-// TypeScript declaration for reCAPTCHA v3
+// TypeScript declaration for reCAPTCHA v2
 declare global {
   interface Window {
     grecaptcha: {
-      execute: (siteKey: string, options: { action: string }) => Promise<string>
+      render: (container: HTMLElement, parameters: any) => number
+      reset: (widgetId?: number) => void
+      getResponse: (widgetId?: number) => string
       ready: (callback: () => void) => void
     }
   }
@@ -33,8 +35,9 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
 
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   const [recaptchaLoaded, setRecaptchaLoaded] = useState(false)
+  const recaptchaRef = useRef<HTMLDivElement>(null)
+  const [recaptchaWidgetId, setRecaptchaWidgetId] = useState<number | null>(null)
 
   // Get and validate reCAPTCHA site key
   const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY
@@ -44,47 +47,123 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
     recaptchaSiteKey.length > 20 &&
     (recaptchaSiteKey.startsWith('6L') || recaptchaSiteKey.startsWith('6I'))
 
-  // Load reCAPTCHA v3 script
+  // Load reCAPTCHA v2 script
   useEffect(() => {
-    if (!isValidSiteKey) return
+    console.log('🔑 reCAPTCHA Setup Debug:')
+    console.log('   Site key:', recaptchaSiteKey)
+    console.log('   Is valid:', isValidSiteKey)
+    console.log('   Ref available:', !!recaptchaRef.current)
+
+    if (!isValidSiteKey) {
+      console.error('❌ reCAPTCHA site key is invalid')
+      setErrors(prev => ({ ...prev, recaptcha: 'Invalid reCAPTCHA configuration' }))
+      return
+    }
 
     const loadRecaptcha = () => {
+      console.log('🚀 Loading reCAPTCHA script...')
+      // Create unique callback name to avoid conflicts
+      const callbackName = `onRecaptchaLoad_${Date.now()}`
+      console.log('📝 Callback name:', callbackName)
+
       const script = document.createElement('script')
-      script.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`
+      script.src = `https://www.google.com/recaptcha/api.js?onload=${callbackName}&render=explicit`
       script.async = true
       script.defer = true
-      script.onload = () => {
+
+      // Guarded logging to avoid calling a non-function if console.log is unavailable or shadowed
+      if (typeof window !== 'undefined' && window.console && typeof window.console.log === 'function') {
+        window.console.log('📜 Script src:', script.src)
+      }
+
+      // Global callback for reCAPTCHA v2
+      (window as any)[callbackName] = () => {
+        console.log('✅ reCAPTCHA callback triggered!')
+        console.log('   grecaptcha available:', !!window.grecaptcha)
+        console.log('   Ref current:', !!recaptchaRef.current)
         setRecaptchaLoaded(true)
+        if (recaptchaRef.current && window.grecaptcha) {
+          try {
+            const widgetId = window.grecaptcha.render(recaptchaRef.current, {
+              sitekey: recaptchaSiteKey,
+              theme: 'light',
+              size: 'normal',
+              callback: (token: string) => {
+                // Token is automatically captured when user completes challenge
+                console.log('reCAPTCHA completed')
+              },
+              'expired-callback': () => {
+                setErrors(prev => ({ ...prev, recaptcha: 'reCAPTCHA expired. Please try again.' }))
+              },
+              'error-callback': () => {
+                setErrors(prev => ({ ...prev, recaptcha: 'reCAPTCHA error. Please try again.' }))
+              }
+            })
+            setRecaptchaWidgetId(widgetId)
+          } catch (error) {
+            console.error('Failed to render reCAPTCHA:', error)
+            setErrors(prev => ({ ...prev, recaptcha: 'Failed to load reCAPTCHA' }))
+          }
+        }
+
+        // Clean up the global callback
+        delete (window as any)[callbackName]
       }
-      script.onerror = () => {
-        console.error('Failed to load reCAPTCHA script')
-        setErrors(prev => ({ ...prev, recaptcha: 'reCAPTCHA failed to load' }))
+
+      script.onerror = (error) => {
+        console.error('❌ Failed to load reCAPTCHA script:', error)
+        console.error('   Script URL:', script.src)
+        console.error('   Network accessible?', navigator.onLine)
+        setErrors(prev => ({ ...prev, recaptcha: 'Failed to load reCAPTCHA. Check internet connection.' }))
+        // Clean up on error too
+        delete (window as any)[callbackName]
       }
+
       document.head.appendChild(script)
     }
 
     // Check if script is already loaded
     if (!document.querySelector(`script[src*="recaptcha/api.js"]`)) {
       loadRecaptcha()
-    } else {
-      setRecaptchaLoaded(true)
+    } else if (window.grecaptcha && recaptchaRef.current) {
+      // Script already loaded, render widget
+      try {
+        const widgetId = window.grecaptcha.render(recaptchaRef.current, {
+          sitekey: recaptchaSiteKey,
+          theme: 'light',
+          size: 'normal'
+        })
+        setRecaptchaWidgetId(widgetId)
+        setRecaptchaLoaded(true)
+      } catch (error) {
+        console.error('Failed to render reCAPTCHA:', error)
+      }
     }
-
-    // No cleanup needed - reCAPTCHA scripts should persist
   }, [isValidSiteKey, recaptchaSiteKey])
 
-  // Execute reCAPTCHA v3
-  const executeRecaptcha = async (): Promise<string | null> => {
-    if (!recaptchaLoaded || !window.grecaptcha || !isValidSiteKey) {
+  // Get reCAPTCHA v2 response
+  const getRecaptchaResponse = (): string | null => {
+    if (!recaptchaLoaded || !window.grecaptcha || recaptchaWidgetId === null) {
       return null
     }
 
     try {
-      const token = await window.grecaptcha.execute(recaptchaSiteKey, { action: 'contact_form' })
-      return token
+      const response = window.grecaptcha.getResponse(recaptchaWidgetId)
+      return response || null
     } catch (error) {
-      console.error('reCAPTCHA execution failed:', error)
+      console.error('Failed to get reCAPTCHA response:', error)
       return null
+    }
+  }
+
+  // Reset reCAPTCHA widget
+  const resetRecaptcha = () => {
+    if (window.grecaptcha && recaptchaWidgetId !== null) {
+      try {
+        window.grecaptcha.reset(recaptchaWidgetId)
+      } catch (error) {
+        console.error('Failed to reset reCAPTCHA:', error)
+      }
     }
   }
 
@@ -202,11 +281,16 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
       newErrors.message = 'Message must be less than 1000 characters'
     }
 
-    // reCAPTCHA v3 validation
+    // reCAPTCHA v2 validation
     if (!isValidSiteKey) {
       newErrors.recaptcha = 'reCAPTCHA configuration error. Please contact support.'
     } else if (!recaptchaLoaded) {
       newErrors.recaptcha = 'reCAPTCHA is loading. Please wait a moment.'
+    } else {
+      const recaptchaResponse = getRecaptchaResponse()
+      if (!recaptchaResponse) {
+        newErrors.recaptcha = 'Please complete the reCAPTCHA verification.'
+      }
     }
 
     setErrors(newErrors)
@@ -224,11 +308,11 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
     setIsSubmitting(true)
 
     try {
-      // Execute reCAPTCHA v3 before sending
-      const recaptchaToken = await executeRecaptcha()
+      // Get reCAPTCHA v2 response
+      const recaptchaToken = getRecaptchaResponse()
 
       if (!recaptchaToken) {
-        toast.error('reCAPTCHA verification failed. Please try again.')
+        toast.error('Please complete the reCAPTCHA verification.')
         setIsSubmitting(false)
         return
       }
@@ -254,7 +338,9 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
           customOrganization: '',
           message: ''
         })
-        setRecaptchaToken(null)
+
+        // Reset reCAPTCHA widget
+        resetRecaptcha()
       } else {
         toast.error(result.error || 'Failed to send message')
       }
@@ -383,23 +469,28 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
           </p>
         </motion.div>
 
-        {/* reCAPTCHA v3 Status */}
-        <div className="mt-4">
+        {/* reCAPTCHA v2 Widget */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="mt-4"
+        >
           {isValidSiteKey ? (
-            <div className="p-3 bg-green-50 border border-green-200 rounded-md">
-              <div className="flex items-center space-x-2">
-                {recaptchaLoaded ? (
-                  <>
-                    <span className="text-green-500">✓</span>
-                    <span className="text-green-700 text-sm">Protected by reCAPTCHA</span>
-                  </>
-                ) : (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-500"></div>
-                    <span className="text-green-700 text-sm">Loading reCAPTCHA...</span>
-                  </>
-                )}
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Security Verification
+              </label>
+              <div
+                ref={recaptchaRef}
+                className="flex justify-left"
+              />
+              {!recaptchaLoaded && (
+                <div className="flex items-center justify-center space-x-2 py-4">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                  <span className="text-gray-600 text-sm">Loading security verification...</span>
+                </div>
+              )}
             </div>
           ) : (
             <div className="p-4 bg-red-50 border border-red-200 rounded-md">
@@ -412,7 +503,7 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
             </div>
           )}
           {errors.recaptcha && <p className="text-sm text-red-500 mt-1">{errors.recaptcha}</p>}
-        </div>
+        </motion.div>
 
         {/* Submit */}
         <motion.div
