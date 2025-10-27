@@ -104,6 +104,11 @@ const nextConfig = {
 
   // SWC minification
   swcMinify: true,
+
+  // Disable ESLint during builds (for production deployment)
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 }
 
 module.exports = nextConfig

@@ -15,7 +15,7 @@ export default function LazyComponent({
   children,
   fallback = <div className="min-h-[200px] bg-gray-50 animate-pulse" />,
   rootMargin = CONTENT_LAZY_CONFIG.CONTENT_SECTIONS,
-  threshold = LAZY_LOADING_CONFIG.THRESHOLD_VISIBLE,
+  threshold = CONTENT_LAZY_CONFIG.THRESHOLD_VISIBLE,
   className = ''
 }: LazyComponentProps) {
   const [isVisible, setIsVisible] = useState(false)

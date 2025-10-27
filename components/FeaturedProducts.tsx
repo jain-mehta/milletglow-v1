@@ -5,20 +5,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { client, queries } from '@/sanity/client'
 import ProductCard from '@/components/ProductCard'
-
-interface Product {
-  _id: string
-  name: string
-  slug: { current: string }
-  price: number
-  discount?: number
-  image: any
-  shortDescription?: string
-  benefits?: string[]
-  certifications?: string[]
-  isOutOfStock: boolean
-  isFeatured: boolean
-}
+import { Product } from '@/types/global'
 
 export default function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([])

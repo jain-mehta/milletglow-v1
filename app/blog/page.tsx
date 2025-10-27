@@ -7,18 +7,7 @@ import { client, queries } from '@/sanity/client'
 import BlogCard from '@/components/BlogCard'
 import LazyComponent from '@/components/LazyComponent'
 import { CONTENT_LAZY_CONFIG } from '@/lib/performance'
-
-interface BlogPost {
-  _id: string
-  title: string
-  slug: { current: string }
-  excerpt: string
-  featuredImage: any
-  publishedAt: string
-  author: { name: string, image?: any }
-  tags?: string[]
-  readingTime?: number
-}
+import { BlogPost } from '@/types/global'
 
 export default function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([])

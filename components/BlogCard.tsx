@@ -6,19 +6,10 @@ import Link from 'next/link'
 import { Calendar, User, ArrowRight, Clock } from 'lucide-react'
 import { urlFor } from '@/sanity/client'
 import { formatDate, truncateText } from '@/lib/utils'
+import { BlogPost } from '@/types/global'
 
 interface BlogCardProps {
-  post: {
-    _id: string
-    title: string
-    slug: { current: string }
-    excerpt: string
-    featuredImage: any
-    publishedAt: string
-    author: { name: string; image?: any }
-    tags?: string[]
-    readingTime?: number
-  }
+  post: BlogPost
   index?: number
 }
 

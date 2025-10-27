@@ -7,33 +7,7 @@ import { memo, useMemo, useCallback } from 'react'
 import { urlFor } from '@/sanity/client'
 import { formatPrice, generateWhatsAppUrl } from '@/lib/utils'
 import { trackProductInterest } from '@/lib/gtag'
-
-// Improved type definitions
-interface ProductImage {
-  _type: 'image'
-  asset: {
-    _ref: string
-    _type: 'reference'
-  }
-}
-
-interface ProductSlug {
-  current: string
-  _type: 'slug'
-}
-
-interface Product {
-  _id: string
-  name: string
-  slug: ProductSlug
-  price: number
-  discount?: number
-  image: ProductImage
-  shortDescription?: string
-  certifications?: string[]
-  isOutOfStock: boolean
-  isFeatured: boolean
-}
+import { Product } from '@/types/global'
 
 interface ProductCardProps {
   product: Product

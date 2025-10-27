@@ -6,20 +6,7 @@ import { client, queries } from '@/sanity/client'
 import ProductCard from '@/components/ProductCard'
 import LazyComponent from '@/components/LazyComponent'
 import { CONTENT_LAZY_CONFIG } from '@/lib/performance'
-
-interface Product {
-  _id: string
-  name: string
-  slug: { current: string }
-  price: number
-  image: any
-  shortDescription?: string
-  benefits?: string[]
-  category: string
-  weight?: string
-  isOutOfStock: boolean
-  isFeatured: boolean
-}
+import { Product } from '@/types/global'
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])

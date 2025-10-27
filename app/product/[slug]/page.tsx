@@ -9,26 +9,12 @@ import { client, queries, urlFor } from '@/sanity/client'
 import RelatedProducts from '@/components/RelatedProducts'
 import LazyImage from '@/components/LazyImage'
 import { IMAGE_CONFIG } from '@/lib/performance'
+import { Product } from '@/types/global'
 
 interface ProductDetailProps {
   params: {
     slug: string
   }
-}
-
-interface Product {
-  _id: string
-  name: string
-  slug: { current: string }
-  price: number
-  discount?: number
-  image: any
-  gallery?: any[]
-  shortDescription: string
-  benefits?: string[]
-  nutritionFacts?: Record<string, any>
-  certifications?: string[]
-  isOutOfStock: boolean
 }
 
 export default function ProductDetailPage({ params }: ProductDetailProps) {
