@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sendAdminNotification } from '@/lib/mailchimpService' // Only used for admin email
+import { processContactForm } from '@/lib/mandrillService'
 
 /**
  * Verify Google reCAPTCHA token
@@ -56,7 +56,7 @@ async function verifyRecaptcha(token: string): Promise<{ success: boolean; error
 }
 
 /**
- * Handle validated contact form submission — only logs and sends admin notification
+ * Handle validated contact form submission with dual email functionality
  */
 async function processContactSubmission(contactData: {
   name: string
@@ -64,7 +64,7 @@ async function processContactSubmission(contactData: {
   phone: string
   organization: string
   message: string
-}): Promise<{ success: boolean; error?: string }> {
+}): Promise<{ success: boolean; error?: string; details?: any }> {
   try {
     console.log('📨 Contact form submission received:', {
       ...contactData,
@@ -72,14 +72,27 @@ async function processContactSubmission(contactData: {
       timestamp: new Date().toISOString(),
     })
 
-    const adminResult = await sendAdminNotification(contactData)
+    // Process contact form with dual email functionality
+    const result = await processContactForm(contactData)
 
-    if (!adminResult?.success) {
-      console.error('⚠️ Failed to send admin notification:', adminResult?.error)
-      return { success: false, error: 'Message received, but notification failed to send.' }
+    if (!result.success) {
+      console.error('⚠️ Failed to process contact form:', result.error)
+      return {
+        success: false,
+        error: result.error || 'Failed to process contact form',
+        details: result.details
+      }
     }
 
-    return { success: true }
+    // Log email sending results
+    if (result.details) {
+      console.log('📧 Email Results:', {
+        confirmation: result.details.confirmation.success ? '✅ Sent' : `❌ Failed: ${result.details.confirmation.error}`,
+        notification: result.details.notification.success ? '✅ Sent' : `❌ Failed: ${result.details.notification.error}`
+      })
+    }
+
+    return { success: true, details: result.details }
   } catch (error) {
     console.error('❌ Contact submission error:', error)
     return { success: false, error: 'Internal error while processing contact submission.' }
@@ -142,7 +155,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // ✅ Process contact
+    // ✅ Process contact with dual email functionality
     const result = await processContactSubmission({
       name,
       email,
@@ -152,10 +165,29 @@ export async function POST(request: NextRequest) {
     })
 
     if (result.success) {
+      // Determine response message based on email results
+      let responseMessage = '✅ Your message has been sent successfully! '
+
+      if (result.details) {
+        const { confirmation, notification } = result.details
+        if (confirmation.success && notification.success) {
+          responseMessage += 'You should receive a confirmation email shortly, and our team will respond within 24 hours.'
+        } else if (confirmation.success) {
+          responseMessage += 'You should receive a confirmation email shortly. Our team has been notified and will respond within 24 hours.'
+        } else if (notification.success) {
+          responseMessage += 'Our team has been notified and will respond within 24 hours.'
+        } else {
+          responseMessage += 'Our team will respond within 24 hours.'
+        }
+      } else {
+        responseMessage += 'Thank you for contacting us!'
+      }
+
       return NextResponse.json(
         {
           success: true,
-          message: '✅ Your message has been sent successfully. Thank you for contacting us!',
+          message: responseMessage,
+          emailDetails: result.details
         },
         { status: 200 }
       )
@@ -165,6 +197,7 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: result.error || 'Failed to process contact form.',
+        details: result.details
       },
       { status: 500 }
     )

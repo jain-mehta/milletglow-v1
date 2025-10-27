@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { client } from '@/sanity/client'
+import { processNewsletterSubscription } from '@/lib/mandrillService'
 
 // Mailchimp integration
 async function subscribeToMailchimp(email: string, name?: string) {
@@ -108,8 +109,15 @@ export async function POST(request: NextRequest) {
       sanityResult = await client.create(subscriberDoc)
     }
 
-    // Subscribe to Mailchimp
+    // Subscribe to Mailchimp (for marketing automation)
     const mailchimpResult = await subscribeToMailchimp(email, name)
+
+    // Send confirmation and notification emails via Mandrill
+    const emailResult = await processNewsletterSubscription({
+      email,
+      name: name || '',
+      source: source || 'website'
+    })
 
     if (mailchimpResult.success) {
       // Update Sanity record with Mailchimp ID if available
@@ -119,30 +127,40 @@ export async function POST(request: NextRequest) {
           .set({ mailchimpId: mailchimpResult.data.id })
           .commit()
       }
-
-      return NextResponse.json(
-        {
-          success: true,
-          message: 'Successfully subscribed to newsletter',
-          data: {
-            sanityId: sanityResult._id,
-            mailchimpId: mailchimpResult.data?.id,
-          }
-        },
-        { status: 200 }
-      )
-    } else {
-      // Even if Mailchimp fails, we keep the Sanity record
-      return NextResponse.json(
-        {
-          success: true,
-          message: 'Subscribed successfully',
-          warning: 'External email service unavailable',
-          data: { sanityId: sanityResult._id }
-        },
-        { status: 200 }
-      )
     }
+
+    // Determine response message based on results
+    let responseMessage = 'Successfully subscribed to newsletter! '
+    let responseWarnings = []
+
+    if (emailResult.success) {
+      if (emailResult.details?.confirmation.success) {
+        responseMessage += 'Check your email for a welcome message.'
+      }
+      if (!emailResult.details?.notification.success) {
+        responseWarnings.push('Admin notification failed')
+      }
+    } else {
+      responseWarnings.push('Welcome email delivery failed')
+    }
+
+    if (!mailchimpResult.success) {
+      responseWarnings.push('Marketing list subscription failed')
+    }
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: responseMessage,
+        warnings: responseWarnings.length > 0 ? responseWarnings : undefined,
+        data: {
+          sanityId: sanityResult._id,
+          mailchimpId: mailchimpResult.data?.id,
+          emailResult: emailResult.details
+        }
+      },
+      { status: 200 }
+    )
   } catch (error) {
     console.error('Newsletter subscription error:', error)
     return NextResponse.json(

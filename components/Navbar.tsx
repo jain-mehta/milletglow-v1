@@ -28,8 +28,10 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white shadow-md' : 'bg-white'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        isScrolled
+          ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-white/20'
+          : 'bg-transparent'
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6">
@@ -55,8 +57,12 @@ export default function Navbar() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`relative font-medium text-sm lg:text-base text-gray-800 hover:text-primary-600 transition-colors duration-200 ${
-                    isActive ? 'text-primary-600' : ''
+                  className={`relative font-medium text-sm lg:text-base transition-colors duration-200 ${
+                    isActive
+                      ? 'text-primary-600'
+                      : isScrolled
+                      ? 'text-gray-800 hover:text-primary-600'
+                      : 'text-gray-800 hover:text-primary-600'
                   }`}
                 >
                   {item.name}
@@ -76,7 +82,11 @@ export default function Navbar() {
           <div className="hidden md:flex">
             <Link
               href="/contact"
-              className="px-5 py-2 border border-amber-500 text-amber-600 font-medium rounded-md hover:bg-amber-50 transition-colors duration-300"
+              className={`px-5 py-2 font-medium rounded-md transition-all duration-300 ${
+                isScrolled
+                  ? 'border border-primary-600 text-primary-600 hover:bg-primary-50'
+                  : 'border border-white/20 bg-white/10 backdrop-blur-sm text-primary-700 hover:bg-white/20'
+              }`}
             >
               Contact
             </Link>
@@ -86,7 +96,11 @@ export default function Navbar() {
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-primary-600 hover:bg-gray-100 focus:outline-none"
+              className={`inline-flex items-center justify-center p-2 rounded-md focus:outline-none transition-all duration-300 ${
+                isScrolled
+                  ? 'text-gray-700 hover:text-primary-600 hover:bg-gray-100'
+                  : 'text-gray-800 hover:text-primary-600 hover:bg-white/10 backdrop-blur-sm'
+              }`}
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
