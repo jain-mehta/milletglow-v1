@@ -109,6 +109,26 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+
+  // Conditional admin panel for production builds
+  async rewrites() {
+    // Only enable admin panel in development or when explicitly enabled
+    if (process.env.NODE_ENV === 'development' || process.env.ENABLE_ADMIN_PANEL === 'true') {
+      return []
+    }
+    // Redirect admin panel to 404 in production
+    return [
+      {
+        source: '/adminpanel/:path*',
+        destination: '/404',
+      }
+    ]
+  },
+
+  // Environment-based configurations
+  env: {
+    SKIP_ADMIN_PANEL: process.env.NODE_ENV === 'production' && process.env.ENABLE_ADMIN_PANEL !== 'true'
+  },
 }
 
 module.exports = nextConfig
