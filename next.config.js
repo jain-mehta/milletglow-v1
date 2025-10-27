@@ -18,38 +18,6 @@ const nextConfig = {
     ],
   },
 
-  // Webpack optimizations
-  webpack: (config, { dev, isServer }) => {
-    // Production optimizations
-    if (!dev && !isServer) {
-      // Safely remove console.log in production
-      if (config.optimization && config.optimization.minimizer) {
-        config.optimization.minimizer.forEach((minimizer) => {
-          if (minimizer.constructor.name === 'TerserPlugin') {
-            if (minimizer.options && minimizer.options.terserOptions) {
-              minimizer.options.terserOptions.compress = {
-                ...minimizer.options.terserOptions.compress,
-                drop_console: true,
-              }
-            }
-          }
-        })
-      }
-    }
-
-    // Bundle analyzer (uncomment to analyze)
-    // if (!isServer && !dev) {
-    //   const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
-    //   config.plugins.push(
-    //     new BundleAnalyzerPlugin({
-    //       analyzerMode: 'static',
-    //       openAnalyzer: false,
-    //     })
-    //   )
-    // }
-
-    return config
-  },
 
   // Security headers
   async headers() {
@@ -110,24 +78,63 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
 
-  // Conditional admin panel for production builds
-  async rewrites() {
-    // Only enable admin panel in development or when explicitly enabled
-    if (process.env.NODE_ENV === 'development' || process.env.ENABLE_ADMIN_PANEL === 'true') {
-      return []
-    }
-    // Redirect admin panel to 404 in production
-    return [
-      {
-        source: '/adminpanel/:path*',
-        destination: '/404',
+  // Exclude admin panel from production builds completely
+  webpack: (config, { dev, isServer }) => {
+    // Production optimizations
+    if (!dev && !isServer) {
+      // Safely remove console.log in production
+      if (config.optimization && config.optimization.minimizer) {
+        config.optimization.minimizer.forEach((minimizer) => {
+          if (minimizer.constructor.name === 'TerserPlugin') {
+            if (minimizer.options && minimizer.options.terserOptions) {
+              minimizer.options.terserOptions.compress = {
+                ...minimizer.options.terserOptions.compress,
+                drop_console: true,
+              }
+            }
+          }
+        })
       }
-    ]
+    }
+
+    // Exclude Sanity dependencies in production builds
+    if (!dev) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        '@sanity/vision': false,
+        'sanity/desk': false,
+        'next-sanity/studio': false,
+      }
+    }
+
+    return config
   },
 
   // Environment-based configurations
   env: {
-    SKIP_ADMIN_PANEL: process.env.NODE_ENV === 'production' && process.env.ENABLE_ADMIN_PANEL !== 'true'
+    SKIP_ADMIN_PANEL: (process.env.NODE_ENV === 'production' && process.env.ENABLE_ADMIN_PANEL !== 'true') ? 'true' : 'false'
+  },
+
+  // Exclude admin panel pages from build
+  async redirects() {
+    const redirects = [
+      {
+        source: '/admin',
+        destination: '/adminpanel',
+        permanent: true,
+      },
+    ]
+
+    // In production, redirect admin panel to 404
+    if (process.env.NODE_ENV === 'production') {
+      redirects.push({
+        source: '/adminpanel/:path*',
+        destination: '/404',
+        permanent: false,
+      })
+    }
+
+    return redirects
   },
 }
 
