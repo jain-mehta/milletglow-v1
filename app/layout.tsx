@@ -22,6 +22,9 @@ export const metadata: Metadata = {
   description:
     'Nourish your body with the power of millet. Premium quality, organic millet products for a healthy lifestyle. Fast delivery across India.',
   metadataBase: new URL('https://milletglow.com'),
+  icons: {
+    icon: '/images/banners/logo.png', 
+  },
 }
 
 export default function RootLayout({
