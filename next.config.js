@@ -21,9 +21,20 @@ const nextConfig = {
   // Webpack optimizations
   webpack: (config, { dev, isServer }) => {
     // Production optimizations
-    if (!dev) {
-      // Remove console.log in production
-      config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
+    if (!dev && !isServer) {
+      // Safely remove console.log in production
+      if (config.optimization && config.optimization.minimizer) {
+        config.optimization.minimizer.forEach((minimizer) => {
+          if (minimizer.constructor.name === 'TerserPlugin') {
+            if (minimizer.options && minimizer.options.terserOptions) {
+              minimizer.options.terserOptions.compress = {
+                ...minimizer.options.terserOptions.compress,
+                drop_console: true,
+              }
+            }
+          }
+        })
+      }
     }
 
     // Bundle analyzer (uncomment to analyze)
