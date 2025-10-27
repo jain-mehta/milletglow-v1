@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { client, queries } from '@/sanity/client'
 import ProductCard from '@/components/ProductCard'
 import LazyComponent from '@/components/LazyComponent'
-import { LAZY_LOADING_CONFIG } from '@/lib/performance'
+import { CONTENT_LAZY_CONFIG } from '@/lib/performance'
 
 interface Product {
   _id: string
@@ -126,7 +126,7 @@ export default function ProductsPage() {
                 ))}
               </div>
             }
-            rootMargin={LAZY_LOADING_CONFIG.CONTENT_SECTIONS}
+            rootMargin={CONTENT_LAZY_CONFIG.CONTENT_SECTIONS}
           >
             <motion.div
               initial={{ opacity: 0, y: 40 }}

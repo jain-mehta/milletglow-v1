@@ -6,7 +6,7 @@ import { Calendar } from 'lucide-react'
 import { client, queries } from '@/sanity/client'
 import BlogCard from '@/components/BlogCard'
 import LazyComponent from '@/components/LazyComponent'
-import { LAZY_LOADING_CONFIG } from '@/lib/performance'
+import { CONTENT_LAZY_CONFIG } from '@/lib/performance'
 
 interface BlogPost {
   _id: string
@@ -106,7 +106,7 @@ export default function BlogPage() {
                   ))}
                 </div>
               }
-              rootMargin={LAZY_LOADING_CONFIG.CONTENT_SECTIONS}
+              rootMargin={CONTENT_LAZY_CONFIG.CONTENT_SECTIONS}
             >
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {posts.map((post, index) => (

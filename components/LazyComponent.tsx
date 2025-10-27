@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, ReactNode } from 'react'
-import { LAZY_LOADING_CONFIG } from '@/lib/performance'
+import { LAZY_LOADING_CONFIG, CONTENT_LAZY_CONFIG } from '@/lib/performance'
 
 interface LazyComponentProps {
   children: ReactNode
@@ -14,7 +14,7 @@ interface LazyComponentProps {
 export default function LazyComponent({
   children,
   fallback = <div className="min-h-[200px] bg-gray-50 animate-pulse" />,
-  rootMargin = LAZY_LOADING_CONFIG.CONTENT_SECTIONS,
+  rootMargin = CONTENT_LAZY_CONFIG.CONTENT_SECTIONS,
   threshold = LAZY_LOADING_CONFIG.THRESHOLD_VISIBLE,
   className = ''
 }: LazyComponentProps) {

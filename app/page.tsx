@@ -8,7 +8,7 @@ import WhyChooseUs from '@/components/WhyChooseUs'
 import BenefitsSection from '@/components/BenefitsSection'
 import Testimonials from '@/components/Testimonials'
 import LazyComponent from '@/components/LazyComponent'
-import { LAZY_LOADING_CONFIG } from '@/lib/performance'
+import { CONTENT_LAZY_CONFIG } from '@/lib/performance'
 
 export default function HomePage() {
   const marqueeText = "📦 For orders, click on the WhatsApp icon below! 💬 We’re happy to help you choose the best millet products!"
@@ -44,7 +44,7 @@ export default function HomePage() {
       {/* Featured Products */}
       <LazyComponent
         fallback={<div className="min-h-[500px] bg-white animate-pulse" />}
-        rootMargin={LAZY_LOADING_CONFIG.CONTENT_SECTIONS}
+        rootMargin={CONTENT_LAZY_CONFIG.CONTENT_SECTIONS}
       >
         <FeaturedProducts />
       </LazyComponent>
@@ -52,7 +52,7 @@ export default function HomePage() {
       {/* How to Buy Section */}
       <LazyComponent
         fallback={<div className="min-h-[400px] bg-gradient-to-br from-gray-50 to-white animate-pulse" />}
-        rootMargin={LAZY_LOADING_CONFIG.CONTENT_SECTIONS}
+        rootMargin={CONTENT_LAZY_CONFIG.CONTENT_SECTIONS}
       >
         <HowToBuy />
       </LazyComponent>
@@ -60,7 +60,7 @@ export default function HomePage() {
       {/* Benefits Section */}
       <LazyComponent
         fallback={<div className="min-h-[400px] bg-gradient-to-br from-primary-50 to-beige-50 animate-pulse" />}
-        rootMargin={LAZY_LOADING_CONFIG.CONTENT_SECTIONS}
+        rootMargin={CONTENT_LAZY_CONFIG.CONTENT_SECTIONS}
       >
         <BenefitsSection />
       </LazyComponent>
@@ -68,7 +68,7 @@ export default function HomePage() {
       {/* Why Choose Us */}
       <LazyComponent
         fallback={<div className="min-h-[500px] bg-white animate-pulse" />}
-        rootMargin={LAZY_LOADING_CONFIG.CONTENT_SECTIONS}
+        rootMargin={CONTENT_LAZY_CONFIG.CONTENT_SECTIONS}
       >
         <WhyChooseUs />
       </LazyComponent>
@@ -76,7 +76,7 @@ export default function HomePage() {
       {/* Testimonials */}
       <LazyComponent
         fallback={<div className="min-h-[500px] bg-gradient-to-br from-primary-50 to-beige-50 animate-pulse" />}
-        rootMargin={LAZY_LOADING_CONFIG.CONTENT_SECTIONS}
+        rootMargin={CONTENT_LAZY_CONFIG.CONTENT_SECTIONS}
       >
         <Testimonials />
       </LazyComponent>
