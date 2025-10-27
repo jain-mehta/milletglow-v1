@@ -3,23 +3,20 @@ import { deskTool } from 'sanity/desk'
 import { visionTool } from '@sanity/vision'
 import { schemaTypes } from './sanity/schemas'
 
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "z3uea27k";
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
+const isProd = process.env.NODE_ENV === "production";
+
 export default defineConfig({
-  name: 'millet-glow',
-  title: 'Millet Glow CMS',
-  basePath: '/adminpanel',
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'z3uea27k',
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  name: "millet-glow",
+  title: "Millet Glow CMS",
+  basePath: "/adminpanel",
 
-  // Configure for production
-  token: process.env.SANITY_API_TOKEN,
-  useCdn: false, // Disable CDN for studio
+  projectId,
+  dataset,
 
-  // Add CORS and authentication settings for production
-  cors: {
-    origin: process.env.NODE_ENV === 'production'
-      ? ['https://milletglow.com', 'https://www.milletglow.com', 'https://milletglow.vercel.app']
-      : ['http://localhost:3000', 'http://localhost:3001']
-  },
+  // Don't use the token or CORS here — those belong in API routes, not Studio
+  useCdn: isProd, // Use CDN in production for faster reads (no sensitive data)
 
   plugins: [
     deskTool({
@@ -43,7 +40,7 @@ export default defineConfig({
                         S.documentList()
                           .title('Featured Products')
                           .filter('_type == "product" && isFeatured == true')
-                          .defaultOrdering([{field: '_createdAt', direction: 'desc'}])
+                          .defaultOrdering([{ field: '_createdAt', direction: 'desc' }])
                       ),
                     S.listItem()
                       .title('Out of Stock')
@@ -51,7 +48,7 @@ export default defineConfig({
                         S.documentList()
                           .title('Out of Stock Products')
                           .filter('_type == "product" && isOutOfStock == true')
-                          .defaultOrdering([{field: '_updatedAt', direction: 'desc'}])
+                          .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
                       ),
                   ])
               ),
@@ -72,7 +69,7 @@ export default defineConfig({
                         S.documentList()
                           .title('Published Posts')
                           .filter('_type == "blog" && isPublished == true')
-                          .defaultOrdering([{field: 'publishedAt', direction: 'desc'}])
+                          .defaultOrdering([{ field: 'publishedAt', direction: 'desc' }])
                       ),
                     S.listItem()
                       .title('Draft Posts')
@@ -80,7 +77,7 @@ export default defineConfig({
                         S.documentList()
                           .title('Draft Posts')
                           .filter('_type == "blog" && isPublished == false')
-                          .defaultOrdering([{field: '_updatedAt', direction: 'desc'}])
+                          .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
                       ),
                     S.listItem()
                       .title('Featured Posts')
@@ -88,7 +85,7 @@ export default defineConfig({
                         S.documentList()
                           .title('Featured Blog Posts')
                           .filter('_type == "blog" && isFeatured == true')
-                          .defaultOrdering([{field: 'publishedAt', direction: 'desc'}])
+                          .defaultOrdering([{ field: 'publishedAt', direction: 'desc' }])
                       ),
                     S.listItem()
                       .title('By Category')
@@ -145,7 +142,7 @@ export default defineConfig({
                         S.documentList()
                           .title('Approved Testimonials')
                           .filter('_type == "testimonial" && status == "approved"')
-                          .defaultOrdering([{field: 'approvedAt', direction: 'desc'}])
+                          .defaultOrdering([{ field: 'approvedAt', direction: 'desc' }])
                       ),
                     S.listItem()
                       .title('Pending Review')
@@ -153,7 +150,7 @@ export default defineConfig({
                         S.documentList()
                           .title('Pending Testimonials')
                           .filter('_type == "testimonial" && status == "pending"')
-                          .defaultOrdering([{field: '_createdAt', direction: 'asc'}])
+                          .defaultOrdering([{ field: '_createdAt', direction: 'asc' }])
                       ),
                     S.listItem()
                       .title('Featured Reviews')
@@ -161,7 +158,7 @@ export default defineConfig({
                         S.documentList()
                           .title('Featured Testimonials')
                           .filter('_type == "testimonial" && isFeatured == true')
-                          .defaultOrdering([{field: 'rating', direction: 'desc'}])
+                          .defaultOrdering([{ field: 'rating', direction: 'desc' }])
                       ),
                     S.listItem()
                       .title('Verified Purchases')
@@ -169,7 +166,7 @@ export default defineConfig({
                         S.documentList()
                           .title('Verified Testimonials')
                           .filter('_type == "testimonial" && isVerified == true')
-                          .defaultOrdering([{field: 'approvedAt', direction: 'desc'}])
+                          .defaultOrdering([{ field: 'approvedAt', direction: 'desc' }])
                       ),
                   ])
               ),
@@ -225,7 +222,7 @@ export default defineConfig({
                                 S.documentList()
                                   .title('Recently Updated Products')
                                   .filter('_type == "product"')
-                                  .defaultOrdering([{field: '_updatedAt', direction: 'desc'}])
+                                  .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
                               ),
                             S.listItem()
                               .title('Recent Blog Posts')
@@ -233,7 +230,7 @@ export default defineConfig({
                                 S.documentList()
                                   .title('Recent Blog Posts')
                                   .filter('_type == "blog"')
-                                  .defaultOrdering([{field: '_createdAt', direction: 'desc'}])
+                                  .defaultOrdering([{ field: '_createdAt', direction: 'desc' }])
                               ),
                             S.listItem()
                               .title('Recent Testimonials')
@@ -241,7 +238,7 @@ export default defineConfig({
                                 S.documentList()
                                   .title('Recent Testimonials')
                                   .filter('_type == "testimonial"')
-                                  .defaultOrdering([{field: '_createdAt', direction: 'desc'}])
+                                  .defaultOrdering([{ field: '_createdAt', direction: 'desc' }])
                               ),
                           ])
                       ),
