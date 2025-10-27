@@ -13,34 +13,67 @@ export default function HeroSection() {
 
       {/* Background SVGs - Responsive positioning */}
       <div className="absolute inset-0 overflow-hidden">
+        {/* Top Right Image */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.1, scale: 1 }}
+          animate={{ opacity: 0.15, scale: 1 }}
           transition={{ duration: 2 }}
           className="absolute top-16 right-4 w-20 h-20 sm:top-20 sm:right-8 sm:w-28 sm:h-28 md:right-10 md:w-32 md:h-32 lg:w-48 lg:h-48 xl:top-20"
         >
           <Image
-            src="/svgs/img5.svg"
+            src="/images/productonly/1.png"
             alt="Millet grain decoration"
             fill
             className="object-contain animate-float"
           />
         </motion.div>
 
+        {/* Bottom Left Image */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.1, scale: 1 }}
+          animate={{ opacity: 0.12, scale: 1 }}
           transition={{ duration: 2, delay: 0.5 }}
           className="absolute bottom-16 left-4 w-16 h-16 sm:bottom-20 sm:left-8 sm:w-20 sm:h-20 md:left-10 md:w-24 md:h-24 lg:w-36 lg:h-36"
         >
           <Image
-            src="/svgs/img6.svg"
+            src="/images/productonly/2.png"
             alt="Millet leaf decoration"
             fill
             className="object-contain animate-float animation-delay-400"
           />
         </motion.div>
+
+        {/* Bottom Right Image */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 0.12, scale: 1 }}
+          transition={{ duration: 2, delay: 0.8 }}
+          className="absolute bottom-10 right-10 w-16 h-16 sm:bottom-16 sm:right-12 sm:w-24 sm:h-24 md:right-16 md:w-28 md:h-28 lg:w-40 lg:h-40"
+        >
+          <Image
+            src="/images/productonly/3.png"
+            alt="Millet leaf decoration"
+            fill
+            className="object-contain animate-float animation-delay-600"
+          />
+        </motion.div>
+
+        {/* Top Left Image */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 0.1, scale: 1 }}
+          transition={{ duration: 2, delay: 1 }}
+          className="absolute top-10 left-8 w-14 h-14 sm:top-14 sm:left-10 sm:w-20 sm:h-20 md:top-16 md:left-14 md:w-28 md:h-28 lg:w-36 lg:h-36"
+        >
+          <Image
+            src="/images/productonly/4.png"
+            alt="Millet leaf decoration"
+            fill
+            className="object-contain animate-float animation-delay-800"
+          />
+        </motion.div>
       </div>
+
 
       {/* Main Content Container */}
       <div className="container relative z-10 px-4 sm:px-6 lg:px-8">
@@ -145,7 +178,7 @@ export default function HeroSection() {
                 className="absolute inset-0 z-10"
               >
                 <Image
-                  src="/svgs/img1.svg"
+                  src="/images/productonly/hero.png"
                   alt="Premium Millet Products"
                   fill
                   className="object-contain drop-shadow-2xl"

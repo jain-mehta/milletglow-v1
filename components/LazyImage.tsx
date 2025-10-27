@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Image, { ImageProps } from 'next/image'
-import { LAZY_LOADING_CONFIG, IMAGE_CONFIG } from '@/lib/performance'
+import { LAZY_LOADING_CONFIG, CONTENT_LAZY_CONFIG, IMAGE_CONFIG } from '@/lib/performance'
 
 interface LazyImageProps extends Omit<ImageProps, 'onLoad'> {
   src: string
@@ -46,8 +46,8 @@ export default function LazyImage({
         }
       },
       {
-        rootMargin: LAZY_LOADING_CONFIG.PRODUCT_IMAGES,
-        threshold: LAZY_LOADING_CONFIG.THRESHOLD_IMAGES
+        rootMargin: CONTENT_LAZY_CONFIG.PRODUCT_IMAGES,
+        threshold: CONTENT_LAZY_CONFIG.THRESHOLD_VISIBLE
       }
     )
 

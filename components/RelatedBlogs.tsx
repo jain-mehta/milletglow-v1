@@ -5,18 +5,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { client } from '@/sanity/client'
 import BlogCard from '@/components/BlogCard'
-
-interface BlogPost {
-  _id: string
-  title: string
-  slug: { current: string }
-  excerpt: string
-  featuredImage: any
-  publishedAt: string
-  author: { name: string; image?: any }
-  tags?: string[]
-  readingTime?: number
-}
+import { BlogPost } from '@/types/global'
 
 interface RelatedBlogsProps {
   currentBlogSlug: string
