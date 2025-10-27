@@ -1,20 +1,25 @@
 const mailchimpTx: any = require('@mailchimp/mailchimp_transactional')
 
 // Environment variables
-const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY
-const FROM_EMAIL = process.env.FROM_EMAIL || 'info@milletglow.in'
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'harsh@milletglow.in'
+const MANDRILL_API_KEY = process.env.MANDRILL_API_KEY
+const FROM_EMAIL = process.env.FROM_EMAIL || 'webinfo@milletglow.com'
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'webinfo@milletglow.com'
 const COMPANY_NAME = 'MilletGlow'
 const COMPANY_WEBSITE = 'https://milletglow.in'
+
+console.log('📧 Email Configuration:')
+console.log('  FROM_EMAIL:', FROM_EMAIL)
+console.log('  ADMIN_EMAIL:', ADMIN_EMAIL)
+console.log('  MANDRILL_API_KEY:', MANDRILL_API_KEY ? 'Configured' : 'Missing')
 
 // Initialize Mandrill client
 let mandrill: any = null
 try {
-  if (MAILCHIMP_API_KEY) {
-    mandrill = mailchimpTx(MAILCHIMP_API_KEY)
+  if (MANDRILL_API_KEY) {
+    mandrill = mailchimpTx(MANDRILL_API_KEY)
     console.log('✅ Mandrill client initialized successfully')
   } else {
-    console.warn('⚠️ MAILCHIMP_API_KEY is not configured. Email sending will be disabled.')
+    console.warn('⚠️ MANDRILL_API_KEY is not configured. Email sending will be disabled.')
   }
 } catch (err) {
   console.error('❌ Failed to initialize Mandrill client:', err)
@@ -44,6 +49,7 @@ interface NewsletterData {
 
 /**
  * Send contact form confirmation email to the user
+ * Note: Currently disabled due to Mandrill domain restrictions
  */
 export async function sendContactConfirmation(contactData: ContactFormData): Promise<{ success: boolean; error?: string }> {
   try {
@@ -53,6 +59,14 @@ export async function sendContactConfirmation(contactData: ContactFormData): Pro
 
     if (!isValidEmail(contactData.email)) {
       return { success: false, error: 'Invalid email address' }
+    }
+
+    // Skip user confirmation due to Mandrill domain restrictions
+    // Admin will manually respond to contact inquiries
+    console.log('📧 Contact confirmation skipped for:', contactData.email, '(Mandrill domain restriction)')
+    return {
+      success: true,
+      error: 'User confirmation handled manually by admin'
     }
 
     const message = {
@@ -148,18 +162,26 @@ This is an automated confirmation email. Please do not reply to this email.
 If you need immediate assistance, contact us at ${FROM_EMAIL}
       `,
       to: [{ email: contactData.email, name: contactData.name, type: 'to' }],
-      headers: { 'Reply-To': FROM_EMAIL },
+      headers: {
+        'Reply-To': FROM_EMAIL,
+        'X-Mailer': 'MilletGlow Contact System',
+        'X-Priority': '3'
+      },
       track_opens: true,
       track_clicks: true,
       auto_text: true,
+      auto_html: false,
       tags: ['contact-confirmation']
     }
 
     const response = await mandrill.messages.send({ message })
 
     if (response[0]?.status === 'rejected') {
-      console.error('⚠️ Mandrill rejected confirmation email:', response[0]?.reject_reason)
-      return { success: false, error: 'Confirmation email was rejected' }
+      const rejectionReason = response[0]?.reject_reason
+      console.error('⚠️ Mandrill rejected confirmation email:', rejectionReason)
+      console.error('📊 Full Mandrill response:', JSON.stringify(response[0], null, 2))
+      console.error('📧 Message details:', { from_email: FROM_EMAIL, to_email: contactData.email })
+      return { success: false, error: `Confirmation email was rejected: ${rejectionReason}` }
     }
 
     console.log('✅ Contact confirmation email sent to:', contactData.email)
@@ -287,13 +309,21 @@ This notification was sent from ${COMPANY_WEBSITE}
 
     const response = await mandrill.messages.send({ message })
 
+    console.log('📊 Mandrill Response for Contact Admin:', JSON.stringify(response[0], null, 2))
+
     if (response[0]?.status === 'rejected') {
       console.error('⚠️ Mandrill rejected admin notification:', response[0]?.reject_reason)
-      return { success: false, error: 'Admin notification was rejected' }
+      return { success: false, error: `Admin notification was rejected: ${response[0]?.reject_reason}` }
     }
 
-    console.log('✅ Contact admin notification sent to:', ADMIN_EMAIL)
-    return { success: true }
+    if (response[0]?.status === 'sent') {
+      console.log('✅ Contact admin notification sent to:', ADMIN_EMAIL)
+      console.log('📬 Message ID:', response[0]?._id)
+      return { success: true }
+    } else {
+      console.warn('⚠️ Unexpected Mandrill status:', response[0]?.status)
+      return { success: false, error: `Unexpected status: ${response[0]?.status}` }
+    }
   } catch (error: any) {
     console.error('❌ Failed to send contact admin notification:', error)
     return { success: false, error: 'Failed to send admin notification' }
@@ -302,6 +332,7 @@ This notification was sent from ${COMPANY_WEBSITE}
 
 /**
  * Send newsletter subscription confirmation
+ * Note: Currently disabled due to Mandrill domain restrictions
  */
 export async function sendNewsletterConfirmation(newsletterData: NewsletterData): Promise<{ success: boolean; error?: string }> {
   try {
@@ -311,6 +342,14 @@ export async function sendNewsletterConfirmation(newsletterData: NewsletterData)
 
     if (!isValidEmail(newsletterData.email)) {
       return { success: false, error: 'Invalid email address' }
+    }
+
+    // Skip user confirmation due to Mandrill domain restrictions
+    // Admin will manually send welcome emails
+    console.log('📧 Newsletter confirmation skipped for:', newsletterData.email, '(Mandrill domain restriction)')
+    return {
+      success: true,
+      error: 'User confirmation handled manually by admin'
     }
 
     const message = {
@@ -418,18 +457,26 @@ You're receiving this because you subscribed at ${COMPANY_WEBSITE}
 Unsubscribe: ${COMPANY_WEBSITE}/unsubscribe?email=${encodeURIComponent(newsletterData.email)}
       `,
       to: [{ email: newsletterData.email, name: newsletterData.name || '', type: 'to' }],
-      headers: { 'Reply-To': FROM_EMAIL },
+      headers: {
+        'Reply-To': FROM_EMAIL,
+        'X-Mailer': 'MilletGlow Newsletter System',
+        'X-Priority': '3'
+      },
       track_opens: true,
       track_clicks: true,
       auto_text: true,
+      auto_html: false,
       tags: ['newsletter-welcome', 'newsletter-confirmation']
     }
 
     const response = await mandrill.messages.send({ message })
 
     if (response[0]?.status === 'rejected') {
-      console.error('⚠️ Mandrill rejected newsletter confirmation:', response[0]?.reject_reason)
-      return { success: false, error: 'Newsletter confirmation was rejected' }
+      const rejectionReason = response[0]?.reject_reason
+      console.error('⚠️ Mandrill rejected newsletter confirmation:', rejectionReason)
+      console.error('📊 Full Mandrill response:', JSON.stringify(response[0], null, 2))
+      console.error('📧 Message details:', { from_email: FROM_EMAIL, to_email: newsletterData.email })
+      return { success: false, error: `Newsletter confirmation was rejected: ${rejectionReason}` }
     }
 
     console.log('✅ Newsletter confirmation sent to:', newsletterData.email)
@@ -509,13 +556,21 @@ ${COMPANY_NAME} Admin Panel
 
     const response = await mandrill.messages.send({ message })
 
+    console.log('📊 Mandrill Response for Newsletter Admin:', JSON.stringify(response[0], null, 2))
+
     if (response[0]?.status === 'rejected') {
       console.error('⚠️ Mandrill rejected newsletter admin notification:', response[0]?.reject_reason)
-      return { success: false, error: 'Newsletter admin notification was rejected' }
+      return { success: false, error: `Newsletter admin notification was rejected: ${response[0]?.reject_reason}` }
     }
 
-    console.log('✅ Newsletter admin notification sent to:', ADMIN_EMAIL)
-    return { success: true }
+    if (response[0]?.status === 'sent') {
+      console.log('✅ Newsletter admin notification sent to:', ADMIN_EMAIL)
+      console.log('📬 Message ID:', response[0]?._id)
+      return { success: true }
+    } else {
+      console.warn('⚠️ Unexpected Mandrill status:', response[0]?.status)
+      return { success: false, error: `Unexpected status: ${response[0]?.status}` }
+    }
   } catch (error: any) {
     console.error('❌ Failed to send newsletter admin notification:', error)
     return { success: false, error: 'Failed to send newsletter admin notification' }

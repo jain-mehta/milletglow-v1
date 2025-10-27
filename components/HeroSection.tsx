@@ -7,18 +7,18 @@ import { ArrowRight, Sparkles } from 'lucide-react'
 
 export default function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-beige-50 via-white to-primary-50">
+    <section className="relative min-h-[60vh] sm:min-h-[80vh] lg:min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-beige-50 via-white to-primary-50">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-pattern opacity-30"></div>
 
-      {/* Background SVGs - Responsive positioning */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/* Background SVGs - Hidden on mobile for cleaner look */}
+      <div className="absolute inset-0 overflow-hidden hidden sm:block">
         {/* Top Right Image */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 0.15, scale: 1 }}
           transition={{ duration: 2 }}
-          className="absolute top-16 right-4 w-20 h-20 sm:top-20 sm:right-8 sm:w-28 sm:h-28 md:right-10 md:w-32 md:h-32 lg:w-48 lg:h-48 xl:top-20"
+          className="absolute top-20 right-8 w-28 h-28 md:right-10 md:w-32 md:h-32 lg:w-48 lg:h-48 xl:top-20"
         >
           <Image
             src="/images/productonly/1.png"
@@ -33,7 +33,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 0.12, scale: 1 }}
           transition={{ duration: 2, delay: 0.5 }}
-          className="absolute bottom-16 left-4 w-16 h-16 sm:bottom-20 sm:left-8 sm:w-20 sm:h-20 md:left-10 md:w-24 md:h-24 lg:w-36 lg:h-36"
+          className="absolute bottom-20 left-8 w-20 h-20 md:left-10 md:w-24 md:h-24 lg:w-36 lg:h-36"
         >
           <Image
             src="/images/productonly/2.png"
@@ -48,7 +48,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 0.12, scale: 1 }}
           transition={{ duration: 2, delay: 0.8 }}
-          className="absolute bottom-10 right-10 w-16 h-16 sm:bottom-16 sm:right-12 sm:w-24 sm:h-24 md:right-16 md:w-28 md:h-28 lg:w-40 lg:h-40"
+          className="absolute bottom-16 right-12 w-24 h-24 md:right-16 md:w-28 md:h-28 lg:w-40 lg:h-40"
         >
           <Image
             src="/images/productonly/3.png"
@@ -63,7 +63,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 0.1, scale: 1 }}
           transition={{ duration: 2, delay: 1 }}
-          className="absolute top-10 left-8 w-14 h-14 sm:top-14 sm:left-10 sm:w-20 sm:h-20 md:top-16 md:left-14 md:w-28 md:h-28 lg:w-36 lg:h-36"
+          className="absolute top-14 left-10 w-20 h-20 md:top-16 md:left-14 md:w-28 md:h-28 lg:w-36 lg:h-36"
         >
           <Image
             src="/images/productonly/4.png"
@@ -74,141 +74,94 @@ export default function HeroSection() {
         </motion.div>
       </div>
 
-
-      {/* Main Content Container */}
+      {/* Main Content Container - Mobile Optimized */}
       <div className="container relative z-10 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center min-h-screen py-20 lg:py-0">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6 lg:gap-12 items-center min-h-[60vh] sm:min-h-[80vh] lg:min-h-screen py-4 sm:py-12 lg:py-0">
 
-          {/* Content Side - Mobile First */}
+          {/* Content Side - Mobile Compact */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="lg:col-span-6 xl:col-span-5 space-y-6 sm:space-y-8 text-center lg:text-left order-2 lg:order-1"
+            className="lg:col-span-6 xl:col-span-5 space-y-3 sm:space-y-6 lg:space-y-8 text-center lg:text-left order-2 lg:order-1"
           >
-            {/* Badge */}
+            {/* Badge - Compact on mobile */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               className="flex items-center justify-center lg:justify-start space-x-2 text-primary-600"
             >
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
+              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
               <span className="text-xs sm:text-sm font-medium uppercase tracking-wider">
                 Premium Millet Products
               </span>
             </motion.div>
 
-            {/* Main Heading - Responsive Typography */}
+            {/* Main Heading - Single line on mobile */}
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-tight text-primary-900"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight text-primary-900"
             >
-              Nourish Your Body with the{' '}
-              <span className="text-gradient bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
-                Power of Millet
+              <span className="block sm:inline">Ancient Grains.</span>{' '}
+              <span className="text-gradient bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent block sm:inline">
+                Built for Modern Families.
               </span>
             </motion.h1>
 
-            {/* Description - Responsive sizing */}
+            {/* Description - Compact on mobile */}
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed max-w-none lg:max-w-lg mx-auto lg:mx-0"
+              className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-none lg:max-w-lg mx-auto lg:mx-0"
             >
-              Discover our premium collection of organic millet products,
-              carefully crafted to bring you nature's most nutritious superfood
-              in its purest form.
+              Refreshing millet drinks designed for everyday energy and healthier living.
             </motion.p>
 
-            {/* Buttons - Responsive layout */}
+            {/* Buttons - Single row on mobile */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.7 }}
-              className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start"
+              className="flex flex-row gap-2 sm:gap-3 lg:gap-4 justify-center lg:justify-start"
             >
-              <Link href="/products" className="btn-primary group flex items-center justify-center px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base">
+              <Link href="/products" className="btn-primary group flex items-center justify-center px-4 py-2 sm:px-6 sm:py-3 lg:px-8 lg:py-4 text-xs sm:text-sm lg:text-base">
                 Shop Now
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 ml-1 sm:ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link href="/about" className="btn-secondary px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base text-center">
+              <Link href="/about" className="btn-secondary px-4 py-2 sm:px-6 sm:py-3 lg:px-8 lg:py-4 text-xs sm:text-sm lg:text-base text-center">
                 Learn More
               </Link>
             </motion.div>
-
-            {/* Stats - Responsive grid */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.9 }}
-              className="grid grid-cols-3 gap-4 sm:gap-6 lg:gap-8 pt-6 sm:pt-8 border-t border-gray-200 max-w-md mx-auto lg:max-w-none"
-            >
-              <div className="text-center">
-                <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary-600">100%</div>
-                <div className="text-xs sm:text-sm text-gray-600 mt-1">Organic</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary-600">1000+</div>
-                <div className="text-xs sm:text-sm text-gray-600 mt-1">Happy Customers</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary-600">5★</div>
-                <div className="text-xs sm:text-sm text-gray-600 mt-1">Reviews</div>
-              </div>
-            </motion.div>
           </motion.div>
 
-          {/* Hero Image Side - Responsive sizing */}
+          {/* Hero Image Side - Much smaller on mobile */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="lg:col-span-6 xl:col-span-7 relative order-1 lg:order-2"
           >
-            <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[500px] xl:h-[600px] max-w-lg mx-auto lg:max-w-none">
+            <div className="relative w-full h-[150px] sm:h-[250px] md:h-[350px] lg:h-[500px] xl:h-[600px] max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-auto lg:max-w-none">
               {/* Main product image */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1, delay: 0.5 }}
-                className="absolute inset-0 z-10"
+                className="relative z-10 w-full h-auto"
               >
                 <Image
                   src="/images/productonly/hero.png"
                   alt="Premium Millet Products"
-                  fill
-                  className="object-contain drop-shadow-2xl"
+                  width={600}
+                  height={600}
+                  className="object-contain drop-shadow-2xl w-full h-auto"
                   priority
-                  sizes="(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 45vw"
+                  sizes="(max-width: 640px) 60vw, (max-width: 1024px) 50vw, 45vw"
                 />
-              </motion.div>
-
-              {/* Floating elements - Responsive positioning */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 1 }}
-                className="absolute top-4 right-4 sm:top-6 sm:right-6 md:top-8 md:right-8 lg:top-10 lg:right-10 w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 bg-primary-100 rounded-full flex items-center justify-center animate-pulse-gentle shadow-lg"
-              >
-                <span className="text-primary-600 font-bold text-xs sm:text-sm">NEW</span>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 1.2 }}
-                className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 md:bottom-8 md:left-8 lg:bottom-10 lg:left-10 bg-white rounded-lg shadow-xl p-3 sm:p-4 animate-float max-w-[140px] sm:max-w-none"
-              >
-                <div className="flex items-center space-x-2">
-                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full animate-pulse flex-shrink-0"></div>
-                  <span className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">
-                    Fresh & Organic
-                  </span>
-                </div>
               </motion.div>
             </div>
           </motion.div>

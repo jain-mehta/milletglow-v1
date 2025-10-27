@@ -1,44 +1,44 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Heart, Zap, Shield, Brain, Wheat, Droplets } from 'lucide-react'
+import { Leaf, Activity, TrendingDown, Sparkles, Scale, ShieldCheck } from 'lucide-react'
 import Image from 'next/image'
 
 const benefits = [
   {
-    icon: Heart,
-    title: 'Heart Health',
-    description: 'Rich in fiber and antioxidants that support cardiovascular wellness',
+    icon: Leaf,
+    title: 'High Nutritional Value',
+    description: 'Millets are packed with protein, fiber, iron, calcium, and B vitamins for natural strength and sustained energy',
     gradient: 'from-red-500 to-pink-500'
   },
   {
-    icon: Zap,
-    title: 'Energy Boost',
-    description: 'Complex carbohydrates provide sustained energy throughout the day',
+    icon: Activity,
+    title: 'Promotes Digestive Health',
+    description: 'Rich in dietary fiber, millets help prevent bloating and support gut wellness',
     gradient: 'from-yellow-500 to-orange-500'
   },
   {
-    icon: Shield,
-    title: 'Immune Support',
-    description: 'Packed with vitamins and minerals to strengthen your immunity',
+    icon: TrendingDown,
+    title: 'Keeps Blood Sugar Levels Low',
+    description: 'The low glycemic index helps maintain steady glucose levels.',
     gradient: 'from-green-500 to-emerald-500'
   },
   {
-    icon: Brain,
-    title: 'Brain Function',
-    description: 'Essential nutrients that support cognitive health and mental clarity',
+    icon: Sparkles,
+    title: 'Acts as a Natural Antioxidant',
+    description: 'Millets contain polyphenols and flavonoids that fight free radicals and inflammation.',
     gradient: 'from-purple-500 to-indigo-500'
   },
   {
-    icon: Wheat,
-    title: 'Digestive Health',
-    description: 'High fiber content promotes healthy digestion and gut health',
+    icon: Scale,
+    title: 'Aids in Weight Loss',
+    description: 'High fiber keeps you full longer and helps control cravings.',
     gradient: 'from-amber-500 to-yellow-500'
   },
   {
-    icon: Droplets,
-    title: 'Hydration',
-    description: 'Helps maintain optimal hydration and electrolyte balance',
+    icon: ShieldCheck,
+    title: '100 Percent Gluten-Free',
+    description: 'Perfect for those with gluten intolerance or celiac disease.',
     gradient: 'from-blue-500 to-cyan-500'
   }
 ]
@@ -112,7 +112,7 @@ export default function BenefitsSection() {
             Benefits of Millet
           </h2>
           <p className="section-subtitle">
-            Discover the incredible health benefits that make millet a true superfood for modern living
+            Discover why millets are a superfood built for modern wellness.
           </p>
         </motion.div>
 

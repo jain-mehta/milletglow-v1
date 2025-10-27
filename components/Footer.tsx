@@ -11,6 +11,7 @@ import { subscribeToNewsletter } from '@/lib/mailchimp'
 
 const footerLinks = {
   explore: [
+     { name: 'Home', href: '/' },
     { name: 'Products', href: '/products' },
     { name: 'About', href: '/about' },
     { name: 'Blog', href: '/blog' },
@@ -23,8 +24,8 @@ const footerLinks = {
 
 const socialLinks = [
   { name: 'Instagram', icon: Instagram, href: 'https://instagram.com/milletglow' },
-  { name: 'Facebook', icon: Facebook, href: 'https://facebook.com/milletglow' },
-  { name: 'Twitter', icon: Twitter, href: 'https://twitter.com/milletglow' },
+  { name: 'Facebook', icon: Facebook, href: 'https://facebook.com/' },
+  { name: 'Twitter', icon: Twitter, href: 'https://twitter.com/' },
 ]
 
 export default function Footer() {
@@ -67,7 +68,7 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-sm text-gray-400 max-w-xs">
-              Nourishing lives, one grain at a time.
+              Ancient Grains. Built for Modern Families.
             </p>
           </div>
 

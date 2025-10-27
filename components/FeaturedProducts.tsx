@@ -79,19 +79,20 @@ export default function FeaturedProducts() {
             className="text-center mb-16"
           >
             <h2 className="section-title text-primary-900">
-              Featured Products
+              FFeatured Drinks
             </h2>
             <p className="section-subtitle">
-              Discover our most popular millet products, loved by health enthusiasts worldwide
+              Discover our popular millet-based beverages crafted for taste, energy, and
+              wellness
             </p>
           </motion.div>
           <div className="text-center py-16">
             <div className="text-6xl mb-4">🌾</div>
             <h3 className="text-2xl font-semibold text-gray-800 mb-2">
-              No Featured Products Yet
+              No Featured Drinks Yet
             </h3>
             <p className="text-gray-600 mb-8">
-              Our featured products will appear here soon. Check back later!
+              Our featured drinks will appear here soon. Check back later!
             </p>
           </div>
         </div>
@@ -110,7 +111,7 @@ export default function FeaturedProducts() {
           className="text-center mb-16"
         >
           <h2 className="section-title text-primary-900">
-            Featured Products
+            Featured Drinks
           </h2>
           <p className="section-subtitle">
             Discover our most popular millet products, loved by health enthusiasts worldwide
@@ -136,7 +137,7 @@ export default function FeaturedProducts() {
           className="text-center mt-12"
         >
           <Link href="/products" className="btn-primary">
-            View All Products
+            View All Drinks
           </Link>
         </motion.div>
       </div>

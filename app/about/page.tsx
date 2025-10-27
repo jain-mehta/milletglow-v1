@@ -23,12 +23,12 @@ export default function AboutPage() {
               About
             </p>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 mb-4 leading-tight">
-              Nourishing Wellness, <br /> One Sip at a Time
+              Ancient Grains. Built<br /> for Modern Families.
             </h1>
             <p className="text-gray-600 text-base md:text-lg mb-6 leading-relaxed">
-              At Millet Glow, we blend ancient grains with modern nutrition to create
-              drinks that feed your body and brighten your glow. Clean ingredients,
-              transparent sourcing, and recipes inspired by tradition.
+              At Millet Glow, we bring the natural goodness of millets into a refreshing, modern drink. Our
+              beverages are crafted to provide clean, balanced nutrition that keeps you energized
+              throughout the day
             </p>
             <div className="flex items-center gap-3">
               <Link
@@ -37,9 +37,6 @@ export default function AboutPage() {
               >
                 Explore Products <ArrowRight className="w-4 h-4" />
               </Link>
-              <button className="border border-gray-300 hover:bg-gray-100 px-5 py-2.5 rounded-full text-gray-800 font-medium transition-all">
-                Our Story
-              </button>
             </div>
           </motion.div>
 
@@ -72,15 +69,9 @@ export default function AboutPage() {
               What our Founder says
             </h2>
             <p className="text-gray-700 leading-relaxed text-lg">
-              Born from the idea of bringing millet’s natural goodness back to
-              daily lives, Millet Glow started with farmers across India who’ve
-              been growing grains for generations. We’re committed to embracing
-              clean sourcing, sustainable processes, and real nutrition — one
-              sip at a time.
-            </p>
-            <p className="text-gray-700 leading-relaxed text-lg mt-4">
-              We believe real food should be simple, honest, and joyful. That belief
-              guides every recipe and every connection we make — from field to cup.
+              Millet Glow began with a belief that the superfoods India has relied on for generations
+              should be part of everyday life again. Millets are wholesome, sustainable, and deeply
+              rooted in our food culture.
             </p>
           </div>
         </motion.div>
@@ -97,14 +88,18 @@ export default function AboutPage() {
               Our Journey
             </h2>
             <p className="text-gray-700 leading-relaxed text-lg">
-              From the love of sharing millet’s natural goodness back to daily
-              life, we started Millet Glow with a mission to empower farmers and
-              make healthy, wholesome drinks that celebrate India’s rich food
-              heritage.
+              Our journey started with a mission to create drinks that nourish people and the planet. We
+              celebrate India’s rich food heritage while making health simple and enjoyable for modern
+              families.
+
             </p>
             <p className="text-gray-700 leading-relaxed text-lg mt-4">
-              We believe real food should be simple, honest, and joyful. That belief
-              guides every recipe and every connection we make — from field to cup.
+              Why People Trust Millet Glow
+              Made from premium millets
+              Rich in protein, fiber, and essential minerals
+              Naturally gluten-free
+              Sustainably sourced
+              Great taste with everyday convenience
             </p>
           </div>
         </motion.div>

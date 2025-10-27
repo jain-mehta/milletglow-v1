@@ -1,18 +1,18 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Leaf, Award, Truck, Shield, Users, Heart } from 'lucide-react'
+import { Leaf, Award, Truck, Shield } from 'lucide-react'
 
 const features = [
   {
     icon: Leaf,
-    title: '100% Organic',
+    title: '100 Percent Natural Ingredients',
     description: 'Grown without harmful pesticides or chemicals, ensuring pure nutrition',
     color: 'text-green-600',
   },
   {
     icon: Award,
-    title: 'Premium Quality',
+    title: 'Premium Quality Millets',
     description: 'Carefully selected and processed to maintain highest nutritional value',
     color: 'text-yellow-600',
   },
@@ -84,7 +84,6 @@ export default function WhyChooseUs() {
 
                   <h3 className="text-lg font-semibold text-primary-900">{feature.title}</h3>
 
-                  <p className="text-gray-600 leading-relaxed text-sm">{feature.description}</p>
                 </div>
 
                 {/* Hover border effect */}

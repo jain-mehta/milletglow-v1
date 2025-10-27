@@ -50,6 +50,50 @@ async function subscribeToMailchimp(email: string, name?: string) {
   }
 }
 
+// Check subscription status in Mailchimp
+async function checkMailchimpSubscription(email: string) {
+  const apiKey = process.env.MAILCHIMP_API_KEY
+  const audienceId = process.env.MAILCHIMP_AUDIENCE_ID
+  const serverPrefix = process.env.MAILCHIMP_SERVER_PREFIX || 'us1'
+
+  if (!apiKey || !audienceId) {
+    throw new Error('Mailchimp credentials not configured')
+  }
+
+  try {
+    // Calculate MD5 hash of lowercase email for Mailchimp member ID
+    const crypto = require('crypto')
+    const subscriberHash = crypto.createHash('md5').update(email.toLowerCase()).digest('hex')
+
+    const url = `https://${serverPrefix}.api.mailchimp.com/3.0/lists/${audienceId}/members/${subscriberHash}`
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Basic ${Buffer.from(`anystring:${apiKey}`).toString('base64')}`,
+        'Content-Type': 'application/json'
+      }
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      return {
+        subscribed: data.status === 'subscribed',
+        subscribedAt: data.timestamp_opt ? new Date(data.timestamp_opt).toISOString() : null,
+        status: data.status
+      }
+    } else if (response.status === 404) {
+      // Member not found
+      return { subscribed: false, subscribedAt: null, status: 'not_found' }
+    } else {
+      throw new Error(`Mailchimp API error: ${response.status}`)
+    }
+  } catch (error) {
+    console.error('Mailchimp status check error:', error)
+    throw error
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -72,42 +116,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if already subscribed in Sanity
-    const existingSubscriber = await client.fetch(
-      `*[_type == "newsletter" && email == $email][0]`,
-      { email }
-    )
-
-    let sanityResult
-    if (existingSubscriber) {
-      // Update existing subscriber
-      sanityResult = await client
-        .patch(existingSubscriber._id)
-        .set({
-          subscribed: true,
-          subscribedAt: new Date().toISOString(),
-          source,
-        })
-        .commit()
-    } else {
-      // Create new subscriber
-      const subscriberDoc = {
-        _type: 'newsletter',
-        email,
-        name: name || '',
-        source,
-        subscribed: true,
-        subscribedAt: new Date().toISOString(),
-        preferences: {
-          productUpdates: true,
-          promotions: true,
-          healthTips: true,
-          newsBlog: true,
-        },
-      }
-
-      sanityResult = await client.create(subscriberDoc)
-    }
+    // Note: Using MailChimp as primary newsletter storage instead of Sanity
+    // This avoids the need for Sanity write permissions
 
     // Subscribe to Mailchimp (for marketing automation)
     const mailchimpResult = await subscribeToMailchimp(email, name)
@@ -119,33 +129,20 @@ export async function POST(request: NextRequest) {
       source: source || 'website'
     })
 
-    if (mailchimpResult.success) {
-      // Update Sanity record with Mailchimp ID if available
-      if (mailchimpResult.data?.id) {
-        await client
-          .patch(sanityResult._id)
-          .set({ mailchimpId: mailchimpResult.data.id })
-          .commit()
-      }
-    }
+    // Note: Mailchimp is the primary storage, no Sanity updates needed
 
     // Determine response message based on results
     let responseMessage = 'Successfully subscribed to newsletter! '
     let responseWarnings = []
 
-    if (emailResult.success) {
-      if (emailResult.details?.confirmation.success) {
-        responseMessage += 'Check your email for a welcome message.'
-      }
-      if (!emailResult.details?.notification.success) {
-        responseWarnings.push('Admin notification failed')
-      }
+    // Check if admin notification worked (this is the key success indicator)
+    if (emailResult.success && emailResult.details?.notification.success) {
+      responseMessage += 'You\'ve been successfully subscribed! Our team has been notified and will send you a welcome email within 24 hours.'
+    } else if (mailchimpResult.success) {
+      responseMessage += 'You\'ve been added to our mailing list and will receive our next newsletter update!'
     } else {
-      responseWarnings.push('Welcome email delivery failed')
-    }
-
-    if (!mailchimpResult.success) {
-      responseWarnings.push('Marketing list subscription failed')
+      responseMessage = 'Subscription received! Our team will process your request manually.'
+      responseWarnings.push('Please contact us directly if you don\'t hear back within 24 hours')
     }
 
     return NextResponse.json(
@@ -154,7 +151,6 @@ export async function POST(request: NextRequest) {
         message: responseMessage,
         warnings: responseWarnings.length > 0 ? responseWarnings : undefined,
         data: {
-          sanityId: sanityResult._id,
           mailchimpId: mailchimpResult.data?.id,
           emailResult: emailResult.details
         }
@@ -183,16 +179,23 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const subscriber = await client.fetch(
-      `*[_type == "newsletter" && email == $email][0]`,
-      { email }
-    )
-
-    return NextResponse.json({
-      subscribed: subscriber?.subscribed || false,
-      subscribedAt: subscriber?.subscribedAt || null,
-      source: subscriber?.source || null,
-    })
+    // Check subscription status via MailChimp instead of Sanity
+    // This avoids the need for Sanity read/write permissions
+    try {
+      const mailchimpStatus = await checkMailchimpSubscription(email)
+      return NextResponse.json({
+        subscribed: mailchimpStatus.subscribed,
+        subscribedAt: mailchimpStatus.subscribedAt || null,
+        source: 'mailchimp',
+      })
+    } catch (mailchimpError) {
+      // If MailChimp check fails, assume not subscribed
+      return NextResponse.json({
+        subscribed: false,
+        subscribedAt: null,
+        source: null,
+      })
+    }
   } catch (error) {
     console.error('Newsletter status check error:', error)
     return NextResponse.json(

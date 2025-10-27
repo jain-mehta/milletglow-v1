@@ -12,8 +12,9 @@ export default function ContactPage() {
           Contact Us
         </h1>
         <p className="text-gray-500 text-sm">
-          Questions, feedback, or wholesale inquiries — we’d love to hear from you.
-          Fill out the form and we’ll get back within 1–2 business days.
+          We are here to help you glow healthier every day.If you have questions about our millet drinks or want to place an order, contact us anytime.
+          We respond within 1–2 business days.
+
         </p>
       </div>
 
@@ -43,7 +44,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-800">Warehouse & Office</h3>
-                <p>12th Lane, Mumbai, India</p>
+                <p>Hyderabad, Telangana, India</p>
               </div>
             </div>
 
@@ -54,7 +55,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-800">Email</h3>
-                <p>hello@milletglow.example</p>
+                <p>info@milletglow.com</p>
               </div>
             </div>
 
@@ -65,7 +66,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-800">Phone</h3>
-                <p>+91 94505 43210</p>
+                <p>+91 91601 81982</p>
               </div>
             </div>
           </div>

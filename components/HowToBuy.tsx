@@ -8,29 +8,29 @@ const steps = [
   {
     id: 1,
     icon: ShoppingCart,
-    title: "Browse Products",
-    description: "Explore our range of premium millet products and select your favorites from our collection.",
+    title: "Browse Drinks",
+    description: "Explore our range of millet beverages and choose your favorite flavors.",
     color: "bg-blue-500"
   },
   {
     id: 2,
     icon: FaWhatsapp,
     title: "Click WhatsApp Icon",
-    description: "Click the floating WhatsApp button on the website to start your order conversation with us.",
+    description: "Begin your order instantly through WhatsApp.",
     color: "bg-green-500"
   },
   {
     id: 3,
     icon: Package,
-    title: "Share Your Details",
-    description: "Tell us which products you want, quantity, and your delivery address through WhatsApp chat.",
+    title: " Share Your Details",
+    description: "Send your preferred drink, quantity, and delivery address.",
     color: "bg-orange-500"
   },
   {
     id: 4,
     icon: CheckCircle,
     title: "Complete Purchase",
-    description: "Our team will confirm your order, share payment details, and arrange fast delivery to your doorstep.",
+    description: "We confirm your order and deliver fast to your doorstep",
     color: "bg-purple-500"
   }
 ]
@@ -74,10 +74,10 @@ export default function HowToBuy() {
           className="text-center mb-16"
         >
           <h2 className="section-title text-primary-900">
-            How to Buy Our Products
+            How to Buy Our Drinks
           </h2>
           <p className="section-subtitle max-w-2xl mx-auto">
-            Ordering from Millet Glow is simple and convenient. Follow these easy steps to get your favorite millet products delivered to your home.
+            Getting your favorite Millet Glow drinks is simple and convenient.
           </p>
         </motion.div>
 
