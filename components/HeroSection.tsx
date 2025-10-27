@@ -145,7 +145,7 @@ export default function HeroSection() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="lg:col-span-6 xl:col-span-7 relative order-1 lg:order-2"
           >
-            <div className="relative w-full h-[150px] sm:h-[250px] md:h-[350px] lg:h-[500px] xl:h-[600px] max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-auto lg:max-w-none">
+            <div className="relative w-full h-[150px] sm:h-[250px] md:h-[350px] lg:h-[500px] xl:h-[600px] max-w-xs sm:max-w-sm md:max-w-md lg:max-w-none xl:max-w-none mx-auto lg:flex lg:items-center lg:justify-center">
               {/* Main product image */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -156,11 +156,13 @@ export default function HeroSection() {
                 <Image
                   src="/images/productonly/hero.png"
                   alt="Premium Millet Products"
-                  width={600}
-                  height={600}
-                  className="object-contain drop-shadow-2xl w-full h-auto"
+                  width={800}
+                  height={800}
+                  className="object-contain drop-shadow-2xl w-full h-auto select-none"
                   priority
-                  sizes="(max-width: 640px) 60vw, (max-width: 1024px) 50vw, 45vw"
+                  quality={100}
+                  unoptimized={true}
+                  sizes="(max-width: 640px) 80vw, (max-width: 1024px) 70vw, 60vw"
                 />
               </motion.div>
             </div>

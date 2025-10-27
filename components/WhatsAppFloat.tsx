@@ -47,7 +47,7 @@ export default function WhatsAppFloat({
           side="left"
           className="bg-green-600 text-white text-sm font-medium px-3 py-1.5 rounded-md shadow-lg"
         >
-          Order on WhatsApp
+          I want to order Millet Glow
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

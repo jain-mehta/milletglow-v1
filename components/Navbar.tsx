@@ -38,7 +38,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* ✅ Logo */}
           <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
-            <div className="relative w-24 h-8 sm:w-28 sm:h-10 md:w-48 md:h-24">
+            <div className="relative h-24 w-28 sm:w-28 sm:h-10 md:w-64 md:h-40 lg:w-64 lg:h-44">
               <Image
                 src={LogoImage}
                 alt="Millet Glow Logo"
