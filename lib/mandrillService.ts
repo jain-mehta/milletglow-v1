@@ -596,10 +596,3 @@ export async function processNewsletterSubscription(newsletterData: NewsletterDa
   }
 }
 
-// Export individual functions for specific use cases
-export {
-  sendContactConfirmation,
-  sendContactNotification,
-  sendNewsletterConfirmation,
-  sendNewsletterNotification
-}
