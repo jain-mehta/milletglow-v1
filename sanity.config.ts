@@ -17,7 +17,7 @@ export default defineConfig({
   // Add CORS and authentication settings for production
   cors: {
     origin: process.env.NODE_ENV === 'production'
-      ? ['https://your-production-domain.com', 'https://vercel-deployment-url.vercel.app']
+      ? ['https://milletglow.com', 'https://www.milletglow.com', 'https://milletglow.vercel.app']
       : ['http://localhost:3000', 'http://localhost:3001']
   },
 

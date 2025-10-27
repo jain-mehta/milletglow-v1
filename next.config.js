@@ -97,44 +97,26 @@ const nextConfig = {
       }
     }
 
-    // Exclude Sanity dependencies in production builds
-    if (!dev) {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        '@sanity/vision': false,
-        'sanity/desk': false,
-        'next-sanity/studio': false,
-      }
-    }
+    // Keep Sanity dependencies available in production for admin panel
+    // Removed the exclusion to allow admin panel to work
 
     return config
   },
 
   // Environment-based configurations
   env: {
-    SKIP_ADMIN_PANEL: (process.env.NODE_ENV === 'production' && process.env.ENABLE_ADMIN_PANEL !== 'true') ? 'true' : 'false'
+    SKIP_ADMIN_PANEL: 'false' // Always allow admin panel
   },
 
-  // Exclude admin panel pages from build
+  // Admin panel redirects
   async redirects() {
-    const redirects = [
+    return [
       {
         source: '/admin',
         destination: '/adminpanel',
         permanent: true,
       },
     ]
-
-    // In production, redirect admin panel to 404
-    if (process.env.NODE_ENV === 'production') {
-      redirects.push({
-        source: '/adminpanel/:path*',
-        destination: '/404',
-        permanent: false,
-      })
-    }
-
-    return redirects
   },
 }
 
