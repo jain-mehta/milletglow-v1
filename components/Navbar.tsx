@@ -28,83 +28,108 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-white/20'
-          : 'bg-transparent'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
+        ? 'bg-white/95 backdrop-blur-md shadow-md border-b border-gray-200'
+        : 'bg-transparent'
+        }`}
     >
-      <div className="container mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          {/* ✅ Logo */}
-          <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
-            <div className="relative h-24 w-28 sm:w-28 sm:h-10 md:w-64 md:h-40 lg:w-64 lg:h-44">
-              <Image
-                src={LogoImage}
-                alt="Millet Glow Logo"
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
-          </Link>
+      <div className="flex items-center justify-between w-full mt-1 px-4 sm:px-8 h-16 md:h-20">
+        {/* ✅ Bigger Logo without increasing navbar height */}
+        <Link href="/" className="flex items-center flex-shrink-0 relative">
+          <div className="relative w-36 h-20 md:w-44 md:h-16 lg:w-52 lg:h-24">
+            <Image
+              src={LogoImage}
+              alt="Millet Glow Logo"
+              fill
+              className="object-cover  mt-1"
+              priority
+            />
+          </div>
+        </Link>
 
-          {/* ✅ Center Navigation */}
-          <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
-            {navigation.map((item) => {
+        {/* ✅ Center Navigation (2 groups with a visible gap) */}
+        <div className="hidden md:flex items-center">
+          <div className="flex items-center space-x-6 lg:space-x-8">
+            {navigation.slice(0, 2).map((item) => {
               const isActive = pathname === item.href
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`relative font-medium text-sm lg:text-base transition-colors duration-200 ${
-                    isActive
-                      ? 'text-primary-600'
-                      : isScrolled
+                  className={`relative font-medium text-sm lg:text-base transition-colors duration-200 ${isActive
+                    ? 'text-primary-600'
+                    : isScrolled
                       ? 'text-gray-800 hover:text-primary-600'
                       : 'text-gray-800 hover:text-primary-600'
-                  }`}
+                    }`}
                 >
                   {item.name}
                   <span
-                    className={`absolute -bottom-1 left-0 h-0.5 transition-all duration-300 ${
-                      isActive
-                        ? 'w-full bg-primary-600'
-                        : 'w-0 group-hover:w-full bg-primary-600'
-                    }`}
+                    className={`absolute -bottom-1 left-0 h-0.5 transition-all duration-300 ${isActive
+                      ? 'w-full bg-primary-600'
+                      : 'w-0 group-hover:w-full bg-primary-600'
+                      }`}
                   />
                 </Link>
               )
             })}
           </div>
 
-          {/* ✅ Contact Button */}
-          <div className="hidden md:flex">
-            <Link
-              href="/contact"
-              className={`px-5 py-2 font-medium rounded-md transition-all duration-300 ${
-                isScrolled
-                  ? 'border border-primary-600 text-primary-600 hover:bg-primary-50'
-                  : 'border border-white/20 bg-white/10 backdrop-blur-sm text-primary-700 hover:bg-white/20'
-              }`}
-            >
-              Contact
-            </Link>
-          </div>
+          {/* Add large gap between groups */}
+          <div className="w-20 lg:w-28" />
 
-          {/* ✅ Mobile Menu Button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className={`inline-flex items-center justify-center p-2 rounded-md focus:outline-none transition-all duration-300 ${
-                isScrolled
-                  ? 'text-gray-700 hover:text-primary-600 hover:bg-gray-100'
-                  : 'text-gray-800 hover:text-primary-600 hover:bg-white/10 backdrop-blur-sm'
-              }`}
-            >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
+          <div className="flex items-center space-x-6 lg:space-x-8">
+            {navigation.slice(2, 4).map((item) => {
+              const isActive = pathname === item.href
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`relative font-medium text-sm lg:text-base transition-colors duration-200 ${isActive
+                    ? 'text-primary-600'
+                    : isScrolled
+                      ? 'text-gray-800 hover:text-primary-600'
+                      : 'text-gray-800 hover:text-primary-600'
+                    }`}
+                >
+                  {item.name}
+                  <span
+                    className={`absolute -bottom-1 left-0 h-0.5 transition-all duration-300 ${isActive
+                      ? 'w-full bg-primary-600'
+                      : 'w-0 group-hover:w-full bg-primary-600'
+                      }`}
+                  />
+                </Link>
+              )
+            })}
           </div>
+        </div>
+
+
+        {/* ✅ Contact Button */}
+        <div className="hidden md:flex">
+          <Link
+            href="/contact"
+            className={`px-5 py-2 font-medium rounded-md transition-all duration-300 ${isScrolled
+              ? 'border border-primary-600 text-primary-600 hover:bg-primary-50'
+              : 'border border-white/20 bg-white/10 backdrop-blur-sm text-primary-700 hover:bg-white/20'
+              }`}
+          >
+            Contact
+          </Link>
+        </div>
+
+        {/* ✅ Mobile Menu Button */}
+        <div className="md:hidden">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className={`inline-flex items-center justify-center p-2 rounded-md focus:outline-none transition-all duration-300 ${isScrolled
+              ? 'text-gray-700 hover:text-primary-600 hover:bg-gray-100'
+              : 'text-gray-800 hover:text-primary-600 hover:bg-white/10 backdrop-blur-sm'
+              }`}
+          >
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
         </div>
       </div>
 
@@ -126,11 +151,10 @@ export default function Navbar() {
                     key={item.name}
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
-                      isActive
-                        ? 'text-primary-600 bg-primary-50'
-                        : 'text-gray-800 hover:text-primary-600 hover:bg-gray-50'
-                    }`}
+                    className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive
+                      ? 'text-primary-600 bg-primary-50'
+                      : 'text-gray-800 hover:text-primary-600 hover:bg-gray-50'
+                      }`}
                   >
                     {item.name}
                   </Link>

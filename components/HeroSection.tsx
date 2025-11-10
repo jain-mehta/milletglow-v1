@@ -11,9 +11,17 @@ export default function HeroSection() {
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-pattern opacity-30"></div>
 
-      {/* Background SVGs - Hidden on mobile for cleaner look */}
+      {/*
+      ===============================
+      ✅ Background Floating Images (Commented Out)
+      ===============================
+
+      These were decorative floating millet product images 
+      positioned around the hero section. You can re-enable 
+      anytime by removing the comment block below.
+      
       <div className="absolute inset-0 overflow-hidden hidden sm:block">
-        {/* Top Right Image */}
+
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 0.15, scale: 1 }}
@@ -28,7 +36,6 @@ export default function HeroSection() {
           />
         </motion.div>
 
-        {/* Bottom Left Image */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 0.12, scale: 1 }}
@@ -43,7 +50,6 @@ export default function HeroSection() {
           />
         </motion.div>
 
-        {/* Bottom Right Image */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 0.12, scale: 1 }}
@@ -58,7 +64,6 @@ export default function HeroSection() {
           />
         </motion.div>
 
-        {/* Top Left Image */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 0.1, scale: 1 }}
@@ -73,6 +78,7 @@ export default function HeroSection() {
           />
         </motion.div>
       </div>
+      */}
 
       {/* Main Content Container - Mobile Optimized */}
       <div className="container relative z-10 px-4 sm:px-6 lg:px-8">
@@ -98,7 +104,7 @@ export default function HeroSection() {
               </span>
             </motion.div>
 
-            {/* Main Heading - Single line on mobile */}
+            {/* Main Heading */}
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -111,7 +117,7 @@ export default function HeroSection() {
               </span>
             </motion.h1>
 
-            {/* Description - Compact on mobile */}
+            {/* Description */}
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -121,7 +127,7 @@ export default function HeroSection() {
               Refreshing millet drinks designed for everyday energy and healthier living.
             </motion.p>
 
-            {/* Buttons - Single row on mobile */}
+            {/* Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -138,7 +144,7 @@ export default function HeroSection() {
             </motion.div>
           </motion.div>
 
-          {/* Hero Image Side - Much smaller on mobile */}
+          {/* Hero Image Side */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -146,7 +152,6 @@ export default function HeroSection() {
             className="lg:col-span-6 xl:col-span-7 relative order-1 lg:order-2"
           >
             <div className="relative w-full h-[150px] sm:h-[250px] md:h-[350px] lg:h-[500px] xl:h-[600px] max-w-xs sm:max-w-sm md:max-w-md lg:max-w-none xl:max-w-none mx-auto lg:flex lg:items-center lg:justify-center">
-              {/* Main product image */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}

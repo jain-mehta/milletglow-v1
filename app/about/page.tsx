@@ -3,15 +3,15 @@
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
-import ProductCard from '@/components/ProductCard'
 import Link from 'next/link'
 import RelatedBlogs from '@/components/RelatedBlogs'
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-beige-50 via-white to-primary-50">
       <div className="container mx-auto px-6 md:px-12 lg:px-20 py-20">
-        {/* Hero Section */}
+        
+        {/* 🌾 Hero Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
           {/* Left Content */}
           <motion.div
@@ -19,21 +19,20 @@ export default function AboutPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <p className="text-sm uppercase tracking-wide text-gray-500 mb-2">
+            <p className="text-sm uppercase tracking-wide text-primary-600 mb-2">
               About
             </p>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 mb-4 leading-tight">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-900 mb-4 leading-tight">
               Ancient Grains. Built<br /> for Modern Families.
             </h1>
-            <p className="text-gray-600 text-base md:text-lg mb-6 leading-relaxed">
-              At Millet Glow, we bring the natural goodness of millets into a refreshing, modern drink. Our
-              beverages are crafted to provide clean, balanced nutrition that keeps you energized
-              throughout the day
+            <p className="text-gray-700 text-base md:text-lg mb-6 leading-relaxed">
+              At <span className="font-semibold text-primary-700">Millet Glow</span>, we bring the natural goodness of millets into a refreshing, modern drink. 
+              Our beverages are crafted to provide clean, balanced nutrition that keeps you energized throughout the day.
             </p>
             <div className="flex items-center gap-3">
               <Link
                 href="/products"
-                className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-medium px-5 py-2.5 rounded-full transition-all flex items-center gap-2 inline-flex"
+                className="bg-primary-600 hover:bg-primary-700 text-white font-medium px-5 py-2.5 rounded-full transition-all flex items-center gap-2 inline-flex shadow-sm hover:shadow-md"
               >
                 Explore Products <ArrowRight className="w-4 h-4" />
               </Link>
@@ -50,62 +49,62 @@ export default function AboutPage() {
             <Image
               src="/images/banners/temp.png"
               alt="Millet Glow Product"
-              width={400}
-              height={400}
-              className="rounded-xl object-contain"
+              width={420}
+              height={420}
+              className="rounded-2xl object-contain shadow-md bg-white p-4"
             />
           </motion.div>
         </div>
 
-        {/* Founder Section */}
+        {/* 🌱 Founder Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
           className="mt-20"
         >
-          <div className="bg-white/70 rounded-2xl shadow-sm p-8 md:p-10 backdrop-blur-sm">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              What our Founder says
+          <div className="bg-white rounded-2xl shadow-md p-8 md:p-10">
+            <h2 className="text-2xl font-semibold text-primary-800 mb-4">
+              What Our Founder Says
             </h2>
             <p className="text-gray-700 leading-relaxed text-lg">
-              Millet Glow began with a belief that the superfoods India has relied on for generations
-              should be part of everyday life again. Millets are wholesome, sustainable, and deeply
-              rooted in our food culture.
+              <span className="font-semibold text-primary-700">Millet Glow</span> began with a belief that the superfoods India has relied on for generations 
+              should be part of everyday life again. Millets are wholesome, sustainable, and deeply rooted in our food culture.
             </p>
           </div>
         </motion.div>
 
-        {/* Our Journey Section */}
+        {/* 🌾 Our Journey Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           className="mt-10"
         >
-          <div className="bg-white/70 rounded-2xl shadow-sm p-8 md:p-10 backdrop-blur-sm">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+          <div className="bg-white rounded-2xl shadow-md p-8 md:p-10 ">
+            <h2 className="text-2xl font-semibold text-primary-800 mb-4">
               Our Journey
             </h2>
             <p className="text-gray-700 leading-relaxed text-lg">
-              Our journey started with a mission to create drinks that nourish people and the planet. We
-              celebrate India’s rich food heritage while making health simple and enjoyable for modern
-              families.
+              Our journey started with a mission to create drinks that nourish people and the planet. 
+              We celebrate India’s rich food heritage while making health simple and enjoyable for modern families.
+            </p>
 
-            </p>
-            <p className="text-gray-700 leading-relaxed text-lg mt-4">
-              Why People Trust Millet Glow
-              Made from premium millets
-              Rich in protein, fiber, and essential minerals
-              Naturally gluten-free
-              Sustainably sourced
-              Great taste with everyday convenience
-            </p>
+            <div className="mt-6 space-y-2 text-gray-700 leading-relaxed text-lg">
+              <p className="font-semibold text-primary-700">Why People Trust Millet Glow</p>
+              <ul className="list-disc list-inside text-gray-700">
+                <li>Made from premium millets</li>
+                <li>Rich in protein, fiber, and essential minerals</li>
+                <li>Naturally gluten-free</li>
+                <li>Sustainably sourced</li>
+                <li>Great taste with everyday convenience</li>
+              </ul>
+            </div>
           </div>
         </motion.div>
       </div>
 
-      {/* Related Blogs Section */}
+      {/* 📖 Related Blogs Section */}
       <RelatedBlogs
         currentBlogSlug=""
         title="Learn More About Millet"
