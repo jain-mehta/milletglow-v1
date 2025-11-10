@@ -84,7 +84,7 @@ export default function LoadingScreen() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-primary-700 text-lg font-medium"
           >
-            Nourish Naturally
+            Ancient Grains.Built for Modern Families.
           </motion.p>
         </motion.div>
 
