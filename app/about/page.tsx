@@ -20,7 +20,8 @@ export default function AboutPage() {
             transition={{ duration: 0.8 }}
           >
             <p className="text-sm uppercase tracking-wide text-primary-600 mb-2">
-              About
+              The Glow Philosophy <br/>Where wellness meets conscious energy
+
             </p>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-900 mb-4 leading-tight">
               Ancient Grains. Built<br /> for Modern Families.
@@ -47,11 +48,11 @@ export default function AboutPage() {
             className="flex justify-center"
           >
             <Image
-              src="/images/banners/temp.png"
+              src="/images/banners/About us page.png"
               alt="Millet Glow Product"
-              width={420}
+              width={520}
               height={420}
-              className="rounded-2xl object-contain shadow-md bg-white p-4"
+              className="object-contain shadow-md"
             />
           </motion.div>
         </div>

@@ -33,7 +33,7 @@ export default function BlogCard({ post, index = 0 }: BlogCardProps) {
                 src={urlFor(post.featuredImage).width(400).height(300).url()}
                 alt={post.title}
                 fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                className="object-contain group-hover:scale-105 transition-transform duration-300"
               />
             )}
 

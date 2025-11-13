@@ -104,6 +104,10 @@ function ProductCardComponent({
       {...animationVariants}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
+      whileHover={{
+        y: -8,
+        transition: { duration: 0.3, ease: "easeOut" }
+      }}
       className="group"
       role="article"
       aria-label={`Product: ${product.name}`}
@@ -113,7 +117,7 @@ function ProductCardComponent({
         className="block h-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-2xl"
         aria-label={`View details for ${product.name}`}
       >
-        <article className="bg-white rounded-2xl p-4 sm:p-6 flex flex-col h-full shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+        <article className="bg-white rounded-2xl p-4 sm:p-6 flex flex-col h-full shadow-md hover:shadow-2xl hover:shadow-primary-100/50 transition-all duration-300 transform hover:scale-105 border border-gray-100 hover:border-primary-200">
           
           {/* ✅ Image Section (4:3 ratio, full visible image) */}
           <div className="relative aspect-[4/3] flex items-center justify-center mb-4 sm:mb-6 overflow-hidden rounded-lg bg-gray-50">
@@ -124,7 +128,7 @@ function ProductCardComponent({
                 fill
                 priority={priority}
                 sizes={sizes}
-                className="object-contain transition-transform duration-300 group-hover:scale-105"
+                className="object-contain transition-transform duration-300 group-hover:scale-110"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement
                   target.style.display = 'none'
@@ -137,7 +141,7 @@ function ProductCardComponent({
             )}
 
             {product.isFeatured && (
-              <div className="absolute top-2 left-2 bg-primary-600 text-white text-xs px-2 py-1 rounded-md font-medium shadow-sm">
+              <div className="absolute top-2 left-2 bg-primary-600 text-white text-xs px-2 py-1 rounded-md font-medium shadow-sm group-hover:bg-primary-700 group-hover:shadow-lg group-hover:shadow-primary-300/30 transition-all duration-300">
                 Featured
               </div>
             )}
@@ -184,12 +188,12 @@ function ProductCardComponent({
                       -{pricing.discountPercentage}%
                     </span>
                   </div>
-                  <span className="text-primary-600 font-bold text-lg sm:text-xl">
+                  <span className="text-primary-600 group-hover:text-primary-700 font-bold text-lg sm:text-xl transition-colors duration-300">
                     {formatPrice(pricing.discountedPrice)}
                   </span>
                 </>
               ) : (
-                <span className="text-primary-600 font-bold text-lg sm:text-xl">
+                <span className="text-primary-600 group-hover:text-primary-700 font-bold text-lg sm:text-xl transition-colors duration-300">
                   {formatPrice(product.price)}
                 </span>
               )}

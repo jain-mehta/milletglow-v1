@@ -56,7 +56,41 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen pt-20 bg-gradient-to-br from-beige-50 to-white">
-      {/* Header */}
+    
+      {/* Header Image Section */}
+      <section className="pb-8">
+        <div className="container">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="mb-8"
+          >
+            <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] xl:h-[700px] max-w-[1200px] mx-auto rounded-2xl overflow-hidden shadow-xl bg-gradient-to-r from-primary-50 to-secondary-50">
+              <img
+                src="/images/banners/Blog page.png"
+                alt="Millet Wisdom - Health and Nutrition Blog"
+                className="w-full h-full object-cover object-center"
+                style={{
+                  aspectRatio: '1200/700'
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
+              <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 md:p-12">
+                <div className="text-center">
+                  <h2 className="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold drop-shadow-lg mb-2">
+                    Knowledge & Insights
+                  </h2>
+                  <p className="text-white/90 text-sm sm:text-base md:text-lg drop-shadow-md max-w-2xl mx-auto">
+                    Expert articles on nutrition, recipes, and healthy living with millets
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+  {/* Header */}
       <section className="section-padding">
         <div className="container">
           <motion.div
@@ -66,15 +100,14 @@ export default function BlogPage() {
             className="text-center mb-16"
           >
             <h1 className="section-title text-primary-900 mb-4">
-              Millet Wisdom
+              The Glow Journal
             </h1>
             <p className="section-subtitle">
-              Discover the latest insights on millet nutrition, recipes, and healthy living from our experts
+              Discover the science, stories, and lifestyle behind the glow
             </p>
           </motion.div>
         </div>
       </section>
-
 
       {/* Blog Posts Grid */}
       <section className="pb-16">

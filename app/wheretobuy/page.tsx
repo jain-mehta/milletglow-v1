@@ -68,7 +68,7 @@ export default function ProductsPage() {
         >
           <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] xl:h-[700px] max-w-[1200px] mx-auto rounded-2xl overflow-hidden shadow-xl bg-gradient-to-r from-primary-50 to-secondary-50">
             <img
-              src="/images/banners/Product page.png"
+              src="/images/banners/Where to Buy page.png"
               alt="Our Premium Millet Products"
               className="w-full h-full object-cover object-center"
               style={{
@@ -95,9 +95,9 @@ export default function ProductsPage() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h1 className="section-title text-primary-900 mb-4">The Glow Collection </h1>
+          <h1 className="section-title text-primary-900 mb-4">The Glow Spots</h1>
           <p className="section-subtitle">
-            Fuel your everyday energy with nature&apos;s power
+            Locate, shop, and glow on
           </p>
         </motion.div>
         {/* 🔽 Commented out: Search & Filter Section for future use */}
