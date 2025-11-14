@@ -78,17 +78,17 @@ export default function ProductsPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
             <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 md:p-12">
               <div className="text-center">
-                <h2 className="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold drop-shadow-lg mb-2">
+                <h2 className="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold drop-shadow-lg mb-2 hidden md:block">
                   Premium Organic Millet Products
                 </h2>
-                <p className="text-white/90 text-sm sm:text-base md:text-lg drop-shadow-md max-w-2xl mx-auto">
+                <p className="text-white/90 text-sm sm:text-base md:text-lg drop-shadow-md max-w-2xl mx-auto hidden md:block">
                   From farm to table - discover our carefully curated collection
                 </p>
               </div>
             </div>
           </div>
         </motion.div>
-        {/* Header */}
+        {/* Header 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -99,7 +99,7 @@ export default function ProductsPage() {
           <p className="section-subtitle">
             Fuel your everyday energy with nature&apos;s power
           </p>
-        </motion.div>
+        </motion.div>*/}
         {/* 🔽 Commented out: Search & Filter Section for future use */}
         {/*
         <motion.div

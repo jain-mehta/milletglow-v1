@@ -9,54 +9,58 @@ import RelatedBlogs from '@/components/RelatedBlogs'
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-beige-50 via-white to-primary-50">
-      <div className="container mx-auto px-6 md:px-12 lg:px-20 py-20">
-        
-        {/* 🌾 Hero Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-          {/* Left Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <p className="text-sm uppercase tracking-wide text-primary-600 mb-2">
-              The Glow Philosophy <br/>Where wellness meets conscious energy
-
-            </p>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-900 mb-4 leading-tight">
-              Ancient Grains. Built<br /> for Modern Families.
-            </h1>
-            <p className="text-gray-700 text-base md:text-lg mb-6 leading-relaxed">
-              At <span className="font-semibold text-primary-700">Millet Glow</span>, we bring the natural goodness of millets into a refreshing, modern drink. 
-              Our beverages are crafted to provide clean, balanced nutrition that keeps you energized throughout the day.
-            </p>
-            <div className="flex items-center gap-3">
-              <Link
-                href="/products"
-                className="bg-primary-600 hover:bg-primary-700 text-white font-medium px-5 py-2.5 rounded-full transition-all flex items-center gap-2 inline-flex shadow-sm hover:shadow-md"
-              >
-                Explore Products <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </motion.div>
-
-          {/* Right Image */}
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex justify-center"
-          >
-            <Image
+      <div className="container mx-auto px-6 md:px-12 lg:px-20 pt-20">
+        {/* Header Image Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="mb-16"
+        >
+          <div className="relative w-full h-full rounded-2xl max-w-[1200px] mx-auto  overflow-hidden ">
+            <img
               src="/images/banners/About us page.png"
-              alt="Millet Glow Product"
-              width={520}
-              height={420}
-              className="object-contain shadow-md"
+              alt="Millet Glow - Ancient Grains for Modern Families"
+              className="w-full h-full object-contain object-center"
+              style={{
+                aspectRatio: '1200/700'
+              }}
             />
-          </motion.div>
-        </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
+            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 md:p-12">
+              <div className="text-center">
+                <h2 className="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold drop-shadow-lg mb-2 hidden md:block">
+                  The Natural Goodness of Millets
+                </h2>
+                <p className="text-white/90 text-sm sm:text-base md:text-lg drop-shadow-md max-w-2xl mx-auto hidden md:block">
+                  Clean, balanced nutrition that keeps you energized throughout the day
+                </p>
+                <div className="flex justify-center mt-4">
+                  <Link
+                    href="/products"
+                    className="bg-primary-600 hover:bg-primary-700 text-white font-medium px-5 py-2.5 rounded-full transition-all flex items-center gap-2  shadow-sm hover:shadow-md w-fit"
+                  >
+                    Explore Products <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
 
+        {/* Content Sections */}
+        <div className="pb-10">
+        {/* Header Text */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-8"
+        >
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-900 mb-4 leading-tight">
+            Ancient Grains. Built for <br />  Modern Families.
+          </h1>
+        </motion.div>
         {/* 🌱 Founder Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -103,6 +107,7 @@ export default function AboutPage() {
             </div>
           </div>
         </motion.div>
+        </div>
       </div>
 
       {/* 📖 Related Blogs Section */}

@@ -9,10 +9,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import LogoImage from '@/public/images/banners/logo.png'
 
 const navigation = [
-  { name: 'Products', href: '/products' },
-  { name: 'About', href: '/about' },
-  { name: 'Blog', href: '/blog' },
-  { name: 'Where to Buy', href: '/wheretobuy' },
+  { name: 'The Glow Collection', href: '/products' },
+  { name: 'The Glow Philosophy', href: '/about' },
+  { name: 'The Glow Journal', href: '/blog' },
+  { name: 'The Glow Spots', href: '/wheretobuy' },
 ]
 
 export default function Navbar() {
